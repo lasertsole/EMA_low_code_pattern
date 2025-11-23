@@ -1,6 +1,20 @@
 import { fileURLToPath } from 'node:url'
 
 export default defineNuxtConfig({
+  app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
+    head: {
+      title: 'Nuxt', // default fallback title
+      htmlAttrs: {
+        lang: 'en',
+      },
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      ],
+    },
+      charset: 'utf-16',
+      viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
+  },
   devtools: { enabled: false },
   //设置全局样式
   css: [
@@ -20,5 +34,10 @@ export default defineNuxtConfig({
         }
       }
     }
-  }
+  },
+  runtimeConfig: {
+    public: {
+      apiBaseURL: "/api",
+    },
+  },
 })
