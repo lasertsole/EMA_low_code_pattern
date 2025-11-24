@@ -12,6 +12,7 @@
     "lint:fix": "eslint app --fix --quiet"
   },
   "dependencies": {
+    "lodash-es": "^4.17.21",
     "nuxt": "^4.2.1",
     "pathe": "^2.0.3",
     "sass": "^1.94.2",
@@ -22,6 +23,7 @@
     "@eslint/js": "^9.39.1",
     "@eslint/json": "^0.14.0",
     "@eslint/markdown": "^7.5.1",
+    "@types/lodash-es": "^4.17.12",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
