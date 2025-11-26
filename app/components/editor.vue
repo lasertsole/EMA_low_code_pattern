@@ -1,56 +1,54 @@
 <template>
-    <div ref="editor" contenteditable="true" class="editor" placeholder="placeholder" @input.stop="update"></div>
+    <div class="editor">
+        <button @click="clickFunc">template</button>
+        <div class="list">
+            <TransitionGroup tag="ul" name="list">
+                <KeepAlive>
+                    <template v-for="(item, index) in numList" :key="index">
+                        <li>{{ index }}</li>
+                    </template>
+                </KeepAlive>
+            </TransitionGroup>
+        </div>
+    </div>
 </template>
 
 <script lang="ts" setup>
-import { type Ref, ref } from 'vue';
-import { isEmpty, isNil } from 'lodash-es';
+import { KeepAlive, type Reactive } from 'vue';
 
-const content: Ref<string> = ref('');
-const editor: Ref<HTMLElement | null> = useTemplateRef('editor');
-const width: Ref<string> = ref("300px");
-const height: Ref<string> = ref("300px");
-const lineHeight: Ref<string> = ref("initial");
 
-onMounted(() => {
-    if (isNil(editor.value)) return;
-    editor.value.style.lineHeight = height.value;
-});
+const numList: Reactive<string[]> = reactive([]);
 
-function update(event: InputEvent): void {
-    const target = event.target as HTMLInputElement;
-
-    if (event.inputType === "deleteContentBackward" && target.innerHTML === "<br>") {
-        target.innerHTML = "";
-        content.value = "";
-        target.style.lineHeight = "0";
-        target.style.lineHeight = height.value;
-    } else if (isEmpty(target.innerHTML)) {
-        target.innerHTML = "";
-        content.value = "";
-    } else {
-        content.value = target.innerHTML;
-        target.style.lineHeight = lineHeight.value;
-    };
-    console.log(content.value);
-
+function clickFunc(): void {
+    numList.push('1');
 }
-
 </script>
 
 <style lang="scss" scoped>
-.editor {
-    margin: auto auto;
-    width: v-bind(width);
-    height: v-bind(height);
-    outline: none;
-    border: 1px solid #00a8e9;
-    display: flex;
-    align-items: center;
+/* 进入动画 */
+.list-enter-from {
+    opacity: 0;
+    transform: translateX(-30px);
+}
 
-    &:empty:before {
-        content: attr(placeholder);
-        color: gray;
-    }
+/* 离开动画 */
+.list-leave-to {
+    opacity: 0;
+    transform: translateX(30px);
+}
+
+/* 激活状态 */
+.list-enter-active,
+.list-leave-active {
+    transition: all 0.5s ease;
+}
+
+/* 移动动画 - 关键！ */
+.list-move {
+    transition: transform 0.5s ease;
+}
+
+.list-leave-active {
+    position: absolute;
 }
 </style>
