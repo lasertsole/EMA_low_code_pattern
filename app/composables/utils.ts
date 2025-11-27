@@ -6,7 +6,7 @@ if(!import.meta.client) return;
 const topLayerDom: HtmlElement = document.getElementById("topLayer");
 const messageVNode = () => {
 
-  return h('div', { style: 'position:absolute; top:0px; left:0px; width: 100vw; height: 100vh;' });
+  return h('div', {});
 };
 
 render(messageVNode, topLayerDom);
