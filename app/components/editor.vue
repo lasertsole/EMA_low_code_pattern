@@ -8,7 +8,7 @@
     
     <div class="contentCanvas">
         <TransitionGroup name="fade">
-            <template v-for="(item, index) in idToComponentMap.values()" :key="item">
+            <template v-for="(item, index) in idToCurComponentPropsMap.values()" :key="item">
               <component v-bind="transformToComponentProps(item)"></component>
             </template>
         </TransitionGroup>
@@ -16,7 +16,7 @@
     
     <div class="configs">
         <TransitionGroup name="fade">
-            <template v-for="(item, index) in idToComponentMap.values()" :key="item">
+            <template v-for="(item, index) in idToCurComponentPropsMap.values()" :key="item">
                 <component  @update="update">{{item}}</component>
             </template>
         </TransitionGroup>
