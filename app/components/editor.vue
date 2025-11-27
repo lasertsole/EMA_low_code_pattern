@@ -1,14 +1,15 @@
 <template>
-    <div class="editor">
-        <button @click="clickFunc">template</button>
-        <div class="list">
-            <TransitionGroup tag="ul" name="list">
-                <template v-for="(item, index) in componentPropsList" :key="item">
-                  <component @update="update"></component>
-                </template>
-            </TransitionGroup>
-        </div>
+<div class="editor">
+    <div class="componentList"></div>
+    <div class="contentCanvas">
+        <TransitionGroup name="fade">
+            <template v-for="(item, index) in componentPropsList" :key="item">
+              <component @update="update"></component>
+            </template>
+        </TransitionGroup>
     </div>
+    <div class="modifyBoard"></div>
+</div>
 </template>
 
 <script lang="ts" setup>
@@ -24,30 +25,38 @@ function update(targetId:string, updateType: UPDATE_COMPONENT_ENUM, params?: Com
 </script>
 
 <style lang="scss" scoped>
-/* 进入动画 */
-.list-enter-from {
-    opacity: 0;
-    transform: translateX(-30px);
-}
+.editor{
+    @include fullInParent();
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-/* 离开动画 */
-.list-leave-to {
-    opacity: 0;
-    transform: translateX(30px);
-}
+    >.componentList{
+        display: grid;
+    }
 
-/* 激活状态 */
-.list-enter-active,
-.list-leave-active {
-    transition: all 0.5s ease;
-}
+    >.contentCanvas{
+        >.fade-enter-active,
+        >.fade-leave-active {
+          will-change: opacity;
+          transition-property: opacity;
+          transition-duration: 0.3s;
+          transition-timing-function: ease;
+        }
+        >.fade-enter-from,
+        >.fade-leave-to {
+          opacity: 0;
+        }
+        >.fade-enter-to,
+        >.fade-leave-from {
+          opacity: 1;
+          height: auto;
+        }
+    }
 
-/* 移动动画 - 关键！ */
-.list-move {
-    transition: transform 0.5s ease;
-}
-
-.list-leave-active {
-    position: absolute;
+    >.modifyBoard{
+        display:flex;
+        flex-direction: column;
+    }
 }
 </style>
