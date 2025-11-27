@@ -3,11 +3,9 @@
         <button @click="clickFunc">template</button>
         <div class="list">
             <TransitionGroup tag="ul" name="list">
-                <KeepAlive>
-                    <template v-for="(item, index) in numList" :key="index">
-                        <li>{{ index }}</li>
-                    </template>
-                </KeepAlive>
+                <template v-for="(item, index) in componentPropsList" :key="item">
+                  <component @update="update"></component>
+                </template>
             </TransitionGroup>
         </div>
     </div>
@@ -15,12 +13,13 @@
 
 <script lang="ts" setup>
 import { KeepAlive, type Reactive } from 'vue';
+import { type ComponentProps, UPDATE_COMPONENT_ENUM } from "@/types/index.ts"
 
 
 const numList: Reactive<string[]> = reactive([]);
 
-function clickFunc(): void {
-    numList.push('1');
+function update(targetId:string, updateType: UPDATE_COMPONENT_ENUM, params?: ComponentProps): void {
+
 }
 </script>
 
