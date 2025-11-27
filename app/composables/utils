@@ -3,8 +3,10 @@ import { h, render } from "vue";
 //如果当前环境不是客户端，则返回
 if(!import.meta.client) return;
 
-const rootDom: HtmlElement = document.getElementById("root");
-const renderMessageLayer = () => {
-  // 创建一个带有文本内容的 div 元素
-  return h('div', { style: 'position:absolute; top:0px; left:0px; width: 100vw; height: 100vh;' }, '这是一个使用 h 函数创建的文本。');
+const topLayerDom: HtmlElement = document.getElementById("topLayer");
+const messageVNode = () => {
+
+  return h('div', { style: 'position:absolute; top:0px; left:0px; width: 100vw; height: 100vh;' });
 };
+
+render(messageVNode, topLayerDom);
