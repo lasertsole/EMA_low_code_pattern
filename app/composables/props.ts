@@ -65,3 +65,11 @@ export const transformToComponentProps = (props:ComponentProps) => {
         }
     })
 }
+
+// 正则表达式 /([A-Z])/g 匹配所有大写字母（全局匹配）
+// 替换函数中的 $1 代表捕获到的大写字母本身
+function convertCamelToKebab(camelCaseString) {
+  return camelCaseString.replace(/([A-Z])/g, (match, letter) => {
+    return '-' + letter.toLowerCase();
+  });
+}
