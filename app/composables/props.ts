@@ -55,11 +55,11 @@ export const textDefaultProps:ComponentProps = {
     textOverflow: 'initial',
 }
 
-// 组件响应式数组,key为id，值为map
-export const componentPropsMap: Reactive<Map<string, ComponentProps>> = reactive(new Map());
+// 组件响应式数组,key为id，值为当前画布上的组件属性 map
+export const idToCurComponentPropsMap: Reactive<Map<string, ComponentProps>> = reactive(new Map());
 
 // 组件数组
-export const components: Reactive<Component[]> = reactive([]);
+export const componentAdds: Reactive<Component[]> = reactive([]);
 
 // 将默认值props 转换成组件的 props
 export const transformToComponentProps = (props:ComponentProps) => {
