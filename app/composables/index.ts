@@ -1,5 +1,6 @@
-import type { ComponentProps } from "@/types/index.ts"
+import { type Reactive } from 'vue';
 import { mapValues, isNil } from "lodash-es"
+import type { ComponentProps } from "@/types/index.ts"
 
 export const commonDefaultProps:ComponentProps = {
     // size
@@ -47,6 +48,9 @@ export const textDefaultProps:ComponentProps = {
     textIndent: 'initial',
     textOverflow: 'initial',
 }
+
+// 组件响应式数组
+export const componentPropsList: Reactive<ComponentProps[]> = reactive([]);
 
 // 将默认值props 转换成组件的 props
 export const transformToComponentProps = (props:ComponentProps) => {
