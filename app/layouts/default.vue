@@ -30,8 +30,8 @@ onErrorCaptured((err: unknown, instance: ComponentPublicInstance | null) => {
   } else {
     target = 'something';
   }
-  logUtil.e(`${target} happened error...`, errMsg);
-  toastMessage('text', errMsg, { bottom: 100 });
+  // console.error(`${target} happened error...`, errMsg);
+  // toastMessage('text', errMsg, { bottom: 100 });
 
   // 停止错误继续向上传播
   return false;
