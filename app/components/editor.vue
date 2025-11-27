@@ -9,7 +9,7 @@
         <div class="contentCanvas">
             <TransitionGroup name="fade">
                 <template v-for="(item, index) in idToCurComponentPropsMap.values()" :key="item">
-                    <component v-bind="transformToComponentProps(item)"></component>
+                    <!-- <component v-bind="transformToComponentProps(item)"></component> -->
                 </template>
             </TransitionGroup>
         </div>
@@ -17,7 +17,7 @@
         <div class="configs">
             <TransitionGroup name="fade">
                 <template v-for="(item, index) in idToCurComponentPropsMap.values()" :key="item">
-                    <component @update="update">{{ item }}</component>
+                    <!-- <component @update="update">{{ item }}</component> -->
                 </template>
             </TransitionGroup>
         </div>
@@ -25,7 +25,6 @@
 </template>
 
 <script lang="ts" setup>
-import { KeepAlive, type Reactive } from 'vue';
 import { type ComponentProps, UPDATE_COMPONENT_ENUM } from "@/types"
 
 function update(targetId: string, updateType: UPDATE_COMPONENT_ENUM, params?: ComponentProps): void {
@@ -41,15 +40,18 @@ function update(targetId: string, updateType: UPDATE_COMPONENT_ENUM, params?: Co
     align-items: center;
 
     >* {
+        height: 100%;
         background-color: white;
     }
 
     >.adds {
         display: grid;
         border-radius: 1rem;
+        flex-grow: 1;
     }
 
     >.contentCanvas {
+        flex-grow: 2;
 
         >.fade-enter-active,
         >.fade-leave-active {
@@ -72,6 +74,7 @@ function update(targetId: string, updateType: UPDATE_COMPONENT_ENUM, params?: Co
     }
 
     >.configs {
+        flex-grow: 1;
         display: flex;
         border-radius: 1rem;
         flex-direction: column;

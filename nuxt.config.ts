@@ -1,5 +1,4 @@
-import { fileURLToPath } from 'node:url'
-
+//compatibilityDate: '2025-11-27'
 export default defineNuxtConfig({
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
@@ -18,10 +17,6 @@ export default defineNuxtConfig({
   css: [
     '@/assets/css/init.scss'
   ],
-
-  // alias: {
-  //   'commonScss': fileURLToPath(new URL('./app/assets/css/common.scss', import.meta.url)),
-  // },
 
   //在全局scss中添加样式
   vite: {

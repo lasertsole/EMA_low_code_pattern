@@ -1,12 +1,13 @@
 <template>
-    <div class="root">
-        <editor></editor>
-    </div>
+  <div class="root">
+    <editor></editor>
+  </div>
 </template>
 
 <script lang="ts" setup>
+import { isEmpty } from "lodash-es";
 import { onErrorCaptured } from 'vue';
-    
+
 /****************以下是捕获子组件树中的异常****************/
 onErrorCaptured((err: unknown, instance: ComponentPublicInstance | null) => {
   let errMsg: string = '';
@@ -35,10 +36,10 @@ onErrorCaptured((err: unknown, instance: ComponentPublicInstance | null) => {
 
 <style lang="scss" scoped>
 .root {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

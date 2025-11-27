@@ -2,7 +2,7 @@ import { type ComponentPublicInstance } from 'vue';
 
 // 组件属性 类型
 export interface ComponentProps{
-    [key: string]: string | number | boolean | null | undefined | ComponentProps;
+    [key: string]: string | number | boolean | ComponentProps | null | undefined;
 }
 
 // 组件 类型
