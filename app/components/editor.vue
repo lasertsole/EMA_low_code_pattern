@@ -8,7 +8,7 @@
             </template>
         </TransitionGroup>
     </div>
-    <div class="modifyBoard"></div>
+    <div class="configBoard"></div>
 </div>
 </template>
 
@@ -54,7 +54,7 @@ function update(targetId:string, updateType: UPDATE_COMPONENT_ENUM, params?: Com
         }
     }
 
-    >.modifyBoard{
+    >.configBoard{
         display:flex;
         flex-direction: column;
     }
