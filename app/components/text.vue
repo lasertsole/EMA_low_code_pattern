@@ -19,7 +19,7 @@ function inputCB(event:Event):void {
   event.stopPropagation(); // 阻止事件冒泡
 }
 
-const eventHandlers = {
+const eventHandlers:{[key:string]:()=>void} = {
   click: handleClick,
   input: handleInput
 }
