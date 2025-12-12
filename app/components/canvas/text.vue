@@ -1,8 +1,14 @@
 <template>
 <div class="text">
-    <div ref="inputDom">
-        {{ value }}
-    </div>
+    <div
+        ref="inputDom"
+        class="inputArea"
+        @input.stop="inputFunc($event)"
+        contenteditable="true"
+        :readonly="readonly"
+        :placeholder="placeholder"
+        :style="styleProps"
+    >{{ modelValue }}</div>
     <Transition name="fade">
         <div class="clear" v-show="!isEmpty(modelValue)" @click.stop="clearFunc($event)">
             <img src='@/assets/img/text_clear_btn.svg' />
@@ -14,11 +20,12 @@
 <script lang="ts" setup>
     import {type ShallowRef} from "vue";
     import { isEmpty, isNil } from "lodash-es";
-    import type { ComponentProps } from "@/types/index.ts";
+    import type { StyleProps } from "@/types/index.ts";
 
     // domProps 和 styleProps分离
     const {placeholder, readonly, value} = defineProps(transformToComponentProps(textDomProps));
-    const styleProps = useAttrs()?.styleProps as ComponentProps;
+    const styleProps = useAttrs()?.styleProps as StyleProps;
+
 
     const modelValue = ref(value);
 
@@ -53,9 +60,9 @@
 </script>
 
 <style lang="scss" scoped>
+$clearIconSize: 20px;
 .text{
     position: relative;
-    min-height: 3rem;
     
     >.inputArea{
         outline: none;
@@ -75,7 +82,7 @@
         right: 0px;
         top: 50%;
         transform: translateY(-50%);
-        height: 100%;
+        @include fixedHeight($clearIconSize);
 
         > img {
             pointer-events: none;
@@ -102,4 +109,3 @@
     }
 }
 </style>
-    
