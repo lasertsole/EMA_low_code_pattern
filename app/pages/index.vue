@@ -32,8 +32,14 @@
     <div class="configs">
         <div class="title">{{ '属性栏' }}</div>
         <div class="list">
-            {{ selectedCanvasComponent?.domProps }}
-            {{ selectedCanvasComponent?.styleProps }}
+            <template v-if="selectedCanvasComponent?.domProps" v-for="(item,index) in Object.entries(selectedCanvasComponent?.domProps)" :key="item[0]">
+                <div class="configItem">
+                    <div>{{ item[0] }}</div>
+                    <ConfText :value="item"></ConfText>
+                </div>
+            </template>
+            <hr>
+            {{ selectedCanvasComponent?.styleProps && Object.entries(selectedCanvasComponent?.styleProps) }}
             <!-- <TransitionGroup name="fade">
                 <template v-for="component in configComponents" :key="component">
                     <component :is="component"></component>
@@ -149,6 +155,12 @@ onErrorCaptured((err: unknown, instance: ComponentPublicInstance | null) => {
 
         >.title{
             background-color: #a0ffff;
+        }
+        >.list{
+            .configItem{
+                display: flex;
+                align-items: center;
+            }
         }
     }
 }
