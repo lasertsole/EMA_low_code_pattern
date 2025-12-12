@@ -1,5 +1,5 @@
 <template>
-<div class="text">
+<div class="text" tabindex="-1">
     <div
         ref="inputDom"
         class="inputArea"
@@ -60,9 +60,28 @@
 </script>
 
 <style lang="scss" scoped>
+$clearIconSize: 20px;
+$textContainerPadding: 0.3rem;
 .text{
     position: relative;
-    
+    min-height: 3rem;
+    background-color: #f2f2f2;
+    transition-property: background-color, border-color;
+    transition-duration: .3s;
+    transition-timing-function: ease-out;
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    padding-left: $textContainerPadding;
+    padding-right: calc($clearIconSize + $textContainerPadding);
+    padding-top: $textContainerPadding;
+    padding-bottom: $textContainerPadding;
+    outline: none;
+
+    &:focus-within{
+        border-color: var(--theme-color);
+        background-color: transparent;
+    }
+
     >.inputArea{
         outline: none;
         word-break: break-all;
@@ -78,10 +97,10 @@
         justify-content: center;
         align-items: center;
         position: absolute;
-        right: 0px;
+        right: $textContainerPadding;
         top: 50%;
         transform: translateY(-50%);
-        height: 100%;
+        @include fixedHeight($clearIconSize);
 
         > img {
             pointer-events: none;
@@ -99,13 +118,12 @@
 
         &.fade-enter-from,
         &.fade-leave-to {
-          opacity: 0;
+            opacity: 0;
         }
         &.fade-enter-to,
         &.fade-leave-from {
-          opacity: 1;
+            opacity: 1;
         }
     }
 }
 </style>
-    
