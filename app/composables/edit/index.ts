@@ -1,0 +1,104 @@
+import { type Reactive, type AsyncComponentLoader } from 'vue';
+import { cloneDeep, isNil, isObject, isFunction, mapValues } from 'lodash-es';
+import type { ComponentProps, Component } from '@/types/index.ts';
+import { componentNameToInfoMap } from './addsToCanvas';
+
+// 组件列表
+export const addcomponents: Reactive<Component[]> = shallowReactive([]);
+export const canvasComponents: Reactive<Component[]> = shallowReactive([]);
+
+// 将默认值props 转换成组件的 props
+export function transformToComponentProps(props: ComponentProps | null | undefined): {
+  readonly [key: string]: any;
+} {
+  if (isNil(props)) {
+    return {};
+  }
+
+  return mapValues(props, item => {
+    if (!isNil(item)) {
+      let type: Function | undefined;
+      if (isObject(item) && 'default' in item && !isNil(item.default)) {
+        item = item.default;
+        type = (item as ComponentProps).type as Function;
+      }
+
+      return {
+        type: type || item.constructor,
+        default: item
+      };
+    } else {
+      return null;
+    }
+  });
+}
+
+export function reverseFromComponentProps(props: ComponentProps | null | undefined): {
+  readonly [key: string]: any;
+} {
+  if (isNil(props)) {
+    return {};
+  }
+
+  return mapValues(props, item => {
+    if (isObject(item) && 'default' in item) {
+      return item.default;
+    }
+    return item;
+  });
+}
+
+//获取添加组件的vue
+const componentCanvasFiles = import.meta.glob('/components/canvas/**/*.vue');
+Object.entries(componentCanvasFiles).map(([path, component]) => {
+  const tempStr: string = path.replace(/.*\/|\.vue$/g, '');
+
+  if (!isValidComponentNameToInfoMapKey(tempStr)) return;
+
+  const componentName: componentNameToInfoMapKey = tempStr;
+
+  const asynComponents = defineAsyncComponent({
+    loader: component as AsyncComponentLoader<globalThis.Component>
+  });
+
+  const info: Partial<Component> | undefined = componentNameToInfoMap[componentName];
+  if (isNil(info)) return;
+
+  const showName: string = info.showName ?? '';
+
+  addcomponents.push({
+    componentName,
+    showName,
+    instance: asynComponents
+  });
+});
+
+// 添加组件到画布
+export function addCanvasComponent(component: Component): void {
+  const tempStr: string = component.componentName;
+
+  if (!isValidComponentNameToInfoMapKey(tempStr)) return;
+
+  const componentName: componentNameToInfoMapKey = tempStr;
+
+  const info: Partial<Component> | undefined = componentNameToInfoMap[componentName];
+
+  if (isNil(info?.domProps)) return;
+
+  // 为了修改不影响原info而克隆
+  const domProps: ComponentProps = cloneDeep(info.domProps!);
+  const styleProps: ComponentProps = cloneDeep(info.styleProps) ?? {};
+
+  const id: ComponentProps = domProps.id as ComponentProps;
+  if (!isNil(id?.default) && isFunction(id.default)) {
+    domProps.id = id.default();
+  }
+
+  canvasComponents.push({ domProps, styleProps, ...component });
+}
+
+//选中组件
+export const selectedCanvasComponent: Ref<Component | undefined> = ref();
+export function selectCanvasComponent(component: Component): void {
+  selectedCanvasComponent.value = component;
+}
