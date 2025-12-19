@@ -1,7 +1,7 @@
 import type { ComponentProps } from '@/types/index.ts';
 
 //属性由两部分组成 样式属性 和 其他属性
-// 文本组件 的 样式props
+/** 文本组件 的 样式props */
 export const textStyleProps: ComponentProps = {
   ...commonStyleProps,
   // text
@@ -17,7 +17,7 @@ export const textStyleProps: ComponentProps = {
   textOverflow: { default: 'initial' }
 };
 
-// 文本组件 的 非样式属性
+/** 文本组件 的 非样式属性 */
 export const textDomProps: ComponentProps = {
   ...commonDomProps,
   value: '',

@@ -3,12 +3,12 @@ import { cloneDeep, isNil, isObject, isFunction, mapValues } from 'lodash-es';
 import type { ComponentProps, Component } from '@/types/index.ts';
 import { componentNameToInfoMap } from './addsToCanvas';
 
-// 组件列表
+/** 组件列表 */
 export const addcomponents: Reactive<Component[]> = shallowReactive([]);
 export const canvasComponents: Reactive<Component[]> = shallowReactive([]);
 
-// 将默认值props 转换成组件的 props
-export function transformToComponentProps(props: ComponentProps | null | undefined): {
+/** 将默认值props 转换成组件的 props */
+export function transformDefaultPropsToComponentProps(props: ComponentProps | null | undefined): {
   readonly [key: string]: any;
 } {
   if (isNil(props)) {
@@ -33,7 +33,8 @@ export function transformToComponentProps(props: ComponentProps | null | undefin
   });
 }
 
-export function reverseFromComponentProps(props: ComponentProps | null | undefined): {
+/** 将组件的 props反转换成默认值props */
+export function reverseDefaultPropsFromComponentProps(props: ComponentProps | null | undefined): {
   readonly [key: string]: any;
 } {
   if (isNil(props)) {
@@ -48,7 +49,7 @@ export function reverseFromComponentProps(props: ComponentProps | null | undefin
   });
 }
 
-//获取添加组件的vue
+/** 获取添加组件的vue */
 const componentCanvasFiles = import.meta.glob('/components/canvas/**/*.vue');
 Object.entries(componentCanvasFiles).map(([path, component]) => {
   const tempStr: string = path.replace(/.*\/|\.vue$/g, '');
@@ -73,7 +74,7 @@ Object.entries(componentCanvasFiles).map(([path, component]) => {
   });
 });
 
-// 添加组件到画布
+/** 添加组件到画布 */
 export function addCanvasComponent(component: Component): void {
   const tempStr: string = component.componentName;
 
@@ -97,7 +98,7 @@ export function addCanvasComponent(component: Component): void {
   canvasComponents.push({ domProps, styleProps, ...component });
 }
 
-//选中组件
+/** 选中组件 */
 export const selectedCanvasComponent: Ref<Component | undefined> = ref();
 export function selectCanvasComponent(component: Component): void {
   selectedCanvasComponent.value = component;

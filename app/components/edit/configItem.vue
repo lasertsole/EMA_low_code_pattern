@@ -11,7 +11,7 @@
 
 <script lang="ts" setup>
 import type { PropType } from 'vue';
-import ConfText from '~/components/conf/text.vue';
+import ConfText from '~/components/confs/text.vue';
 import type { ComponentPropsValue } from '@/types/index.ts';
 const { title, value } = defineProps({
   title: { required: true, type: String as PropType<string> },

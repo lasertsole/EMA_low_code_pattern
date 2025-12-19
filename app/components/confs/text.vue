@@ -8,7 +8,6 @@
       @input.stop="inputFunc($event)"
       contenteditable="true"
       :readonly="readonly"
-      :placeholder="placeholder"
       :style="styleProps">
       {{ modelValue }}
     </div>
@@ -29,7 +28,7 @@ import { isEmpty, isNil } from 'lodash-es';
 import type { StyleProps } from '@/types/index.ts';
 
 // domProps 和 styleProps分离
-const { value } = defineProps(transformToComponentProps(textDomProps));
+const { value } = defineProps(transformDefaultPropsToComponentProps(textDomProps));
 const styleProps = useAttrs()?.styleProps as StyleProps;
 
 const modelValue = ref(isNil(value.default) ? value : value.default);
@@ -92,7 +91,6 @@ $textContainerPadding: 0.3rem;
     word-break: break-all;
 
     &:empty:before {
-      content: attr(placeholder);
       color: gray;
     }
   }

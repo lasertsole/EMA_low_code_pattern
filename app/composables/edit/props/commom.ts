@@ -1,15 +1,15 @@
 import type { ComponentProps } from '@/types/index.ts';
 import { v4 as uuidv4 } from 'uuid';
 
-// 通用样式props
+/** 通用样式props */
 export const commonStyleProps: ComponentProps = {
   // size
-  height: { default: 'auto' },
-  width: { default: 'auto' },
-  maxHeight: { default: 'auto' },
-  maxWidth: { default: 'auto' },
-  minHeight: { default: 'auto' },
-  minWidth: { default: 'auto' },
+  height: { default: 'auto', configType: 'number' },
+  width: { default: 'auto', configType: 'number' },
+  maxHeight: { default: 'auto', configType: 'number' },
+  maxWidth: { default: 'auto', configType: 'number' },
+  minHeight: { default: 'auto', configType: 'number' },
+  minWidth: { default: 'auto', configType: 'number' },
 
   // position
   position: { default: 'static' },
@@ -37,7 +37,7 @@ export const commonStyleProps: ComponentProps = {
   overflow: { default: 'visible' }
 };
 
-// 通用非样式props
+/** 通用非样式props */
 export const commonDomProps: ComponentProps = {
   //id
   id: { default: () => uuidv4(), type: String }

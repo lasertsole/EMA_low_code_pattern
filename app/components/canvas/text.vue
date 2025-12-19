@@ -27,7 +27,7 @@ import { isEmpty, isNil } from 'lodash-es';
 import type { StyleProps } from '@/types/index.ts';
 
 // domProps 和 styleProps分离
-const { placeholder, readonly, value } = defineProps(transformToComponentProps(textDomProps));
+const { placeholder, readonly, value } = defineProps(transformDefaultPropsToComponentProps(textDomProps));
 const styleProps = useAttrs()?.styleProps as StyleProps;
 
 const modelValue = ref(value);
