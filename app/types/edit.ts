@@ -59,3 +59,20 @@ export enum UPDATE_COMPONENT_ENUM {
   /** 选中 */
   SEL = 8
 }
+
+/** 组件名字映射 */
+export enum CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM {
+  MTE = 'mte',
+  string = 'text'
+}
+
+/**
+ * 验证字符串是否为 CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM 的合法键名
+ * @param {string} key - 待验证的组件名称字符串
+ * @returns {key is CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM} 如果是合法的键则返回 true，同时转换类型
+ */
+export function isValidCONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM(
+  key: string
+): key is CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM {
+  return key in CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM;
+}
