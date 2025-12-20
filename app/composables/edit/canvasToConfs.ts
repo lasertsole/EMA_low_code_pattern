@@ -3,7 +3,8 @@ import { type AsyncComponentLoader } from 'vue';
 
 /** 组件名字映射 */
 export const ConstructToConfComponentNameMap = {
-  String: 'text'
+  mte: 'mte',
+  string: 'text'
 };
 
 /** ConstructToConfComponentNameMap 的键 */

@@ -4,41 +4,41 @@ import { v4 as uuidv4 } from 'uuid';
 /** 通用样式props */
 export const commonStyleProps: ComponentProps = {
   // size
-  height: { default: 'auto', configType: 'number' },
-  width: { default: 'auto', configType: 'number' },
-  maxHeight: { default: 'auto', configType: 'number' },
-  maxWidth: { default: 'auto', configType: 'number' },
-  minHeight: { default: 'auto', configType: 'number' },
-  minWidth: { default: 'auto', configType: 'number' },
+  height: { default: 'auto', config: { type: 'number' } },
+  width: { default: 'auto', config: { type: 'number' } },
+  maxHeight: { default: 'auto', config: { type: 'number' } },
+  maxWidth: { default: 'auto', config: { type: 'number' } },
+  minHeight: { default: 'auto', config: { type: 'number' } },
+  minWidth: { default: 'auto', config: { type: 'number' } },
 
   // position
-  position: { default: 'static' },
-  top: { default: '0px' },
-  right: { default: '0px' },
-  bottom: { default: '0px' },
-  left: { default: '0px' },
+  position: { default: 'static', config: { type: 'select' } },
+  top: { default: '0px', config: { type: 'range' } },
+  right: { default: '0px', config: { type: 'range' } },
+  bottom: { default: '0px', config: { type: 'range' } },
+  left: { default: '0px', config: { type: 'range' } },
 
   // border
-  border: { default: '0px' },
-  borderRadius: { default: '0px' },
-  borderTop: { default: 'initial' },
-  borderRight: { default: 'initial' },
-  borderBottom: { default: 'initial' },
-  borderLeft: { default: 'initial' },
-  borderColor: { default: 'initial' },
-  borderWidth: { default: 'initial' },
+  border: { default: '0px', config: { type: 'range' } },
+  borderRadius: { default: '0px', config: { type: 'range' } },
+  borderTop: { default: 'initial', config: { type: 'range' } },
+  borderRight: { default: 'initial', config: { type: 'range' } },
+  borderBottom: { default: 'initial', config: { type: 'range' } },
+  borderLeft: { default: 'initial', config: { type: 'range' } },
+  borderColor: { default: 'initial', config: { type: 'text' } },
+  borderWidth: { default: 'initial', config: { type: 'text' } },
 
   // shadow and opacity
-  boxShadow: { default: 'initial' },
-  opacity: { default: 'initial' },
+  boxShadow: { default: 'initial', config: { type: 'text' } },
+  opacity: { default: 'initial', config: { type: 'range' } },
 
   // geometric
-  backgroundColor: { default: 'initial' },
-  overflow: { default: 'visible' }
+  backgroundColor: { default: 'initial', config: { type: 'text' } },
+  overflow: { default: 'visible', config: { type: 'select' } }
 };
 
 /** 通用非样式props */
 export const commonDomProps: ComponentProps = {
   //id
-  id: { default: () => uuidv4(), type: String }
+  id: { default: () => uuidv4(), type: String, config: { type: 'text' } }
 };

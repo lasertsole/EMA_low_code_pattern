@@ -5,16 +5,16 @@ import type { ComponentProps } from '@/types/index.ts';
 export const textStyleProps: ComponentProps = {
   ...commonStyleProps,
   // text
-  textAlign: { default: 'left' },
-  color: { default: '#000' },
-  textDecoration: { default: 'none' },
-  fontFamily: { default: 'initial' },
-  fontSize: { default: 'initial' },
-  fontWeight: { default: 'initial' },
-  lineHeight: { default: 'initial' },
-  letterSpacing: { default: 'initial' },
-  textIndent: { default: 'initial' },
-  textOverflow: { default: 'initial' }
+  textAlign: { default: 'left', config: { type: 'select' } },
+  color: { default: '#000', config: { type: 'text' } },
+  textDecoration: { default: 'none', config: { type: 'select' } },
+  fontFamily: { default: 'initial', config: { type: 'select' } },
+  fontSize: { default: 'initial', config: { type: 'range' } },
+  fontWeight: { default: 'initial', config: { type: 'range' } },
+  lineHeight: { default: 'initial', config: { type: 'range' } },
+  letterSpacing: { default: 'initial', config: { type: 'range' } },
+  textIndent: { default: 'initial', config: { type: 'range' } },
+  textOverflow: { default: 'initial', config: { type: 'select' } }
 };
 
 /** 文本组件 的 非样式属性 */
