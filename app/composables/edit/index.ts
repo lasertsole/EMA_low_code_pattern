@@ -1,6 +1,6 @@
 import { type Reactive, type AsyncComponentLoader } from 'vue';
 import { cloneDeep, isNil, isObject, isFunction, mapValues } from 'lodash-es';
-import type { ComponentProps, Component } from '@/types/index.ts';
+import { type ComponentProps, type Component, isComponentPropItem } from '@/types/index';
 import { componentNameToInfoMap } from './addsToCanvas';
 
 /** 组件列表 */
@@ -20,7 +20,9 @@ export function transformDefaultPropsToComponentProps(props: ComponentProps | nu
       let type: Function | undefined;
       if (isObject(item) && 'default' in item && !isNil(item.default)) {
         item = item.default;
-        type = (item as ComponentProps).type as Function;
+        if (isComponentPropItem(item)) {
+          type = item.type as Function;
+        }
       }
 
       return {

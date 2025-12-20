@@ -1,15 +1,36 @@
+import { isNil } from 'lodash-es';
 import type { ComponentPublicInstance } from 'vue';
 
+/** 具体属性项类型 */
+export interface ComponentPropItem {
+  default: string | number | boolean | Function;
+  type?: Function;
+  config: { type: string };
+}
+
+/** 具体属性项类型守卫函数 */
+export function isComponentPropItem(obj: unknown): obj is ComponentPropItem {
+  return (
+    typeof obj === 'object' &&
+    !isNil(obj) &&
+    'default' in obj &&
+    'config' in obj &&
+    'type' in (obj as ComponentPropItem).config
+  );
+}
+
+/** 组件属性值类型 */
 export type ComponentPropsValue =
   | { default: string; type: string }
   | string
   | number
   | boolean
   | Function
-  | ComponentProps
+  | ComponentPropItem
   | null
   | undefined;
-// 组件属性 类型
+
+/** 组件类型 */
 export interface ComponentProps {
   [key: string]: ComponentPropsValue;
 }
