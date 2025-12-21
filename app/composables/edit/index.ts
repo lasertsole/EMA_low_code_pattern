@@ -4,9 +4,7 @@ import {
   type ComponentProps,
   type Component,
   type ComponentPropItemValueObj,
-  isComponentPropItemValueObj,
-  type ComponentPropItemValue,
-  type DefaultValue
+  type ComponentPropItemValue
 } from '@/types/index';
 import { componentNameToInfoMap } from './addsToCanvas';
 
