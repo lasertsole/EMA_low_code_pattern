@@ -1,18 +1,20 @@
 <template>
   <select class="fontSelect">
-    <option v-for="fontFamily in fontFamilyList" :key="fontFamily" :style="`font-family: ${fontFamily}`">
+    <option
+      v-for="fontFamily in fontFamilyList"
+      :key="fontFamily"
+      :style="`font-family: ${fontFamily}`">
       {{ fontFamily }}
     </option>
   </select>
 </template>
 
 <script lang="ts" setup>
-import type { PropType } from "vue";
+import type { PropType } from 'vue';
 
 const props = defineProps({
   fontFamilyList: Array as PropType<string[]>
 });
-
 </script>
 
 <style lang="scss" scoped>

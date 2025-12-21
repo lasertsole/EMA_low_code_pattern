@@ -32,5 +32,5 @@ export function isComponentPropItem(obj: unknown): obj is ComponentPropItem {
 export function isValidCONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM(
   key: string
 ): key is CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM {
-  return key in CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM;
+  return Object.values(CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM).includes(key as CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM);
 }

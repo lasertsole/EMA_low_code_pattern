@@ -2,7 +2,7 @@ import { CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM, isValidCONSTRUCT_TO_CONF_COMPONE
 import { type AsyncComponentLoader } from 'vue';
 
 /** 配置组件实例映射表 */
-export const ConfComponentNameToConfComponentInstanceMap: {
+export const ConfComponentName_To_ConfComponentInstance_Map: {
   [key in CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM]?: Component;
 } = {};
 /** 获取添加组件的vue */
@@ -13,10 +13,9 @@ Object.entries(componentCanvasFiles).map(([path, component]) => {
   if (!isValidCONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM(tempStr)) return;
 
   const componentName: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM = tempStr;
-
   const asynComponents = defineAsyncComponent({
     loader: component as AsyncComponentLoader<globalThis.Component>
   });
 
-  ConfComponentNameToConfComponentInstanceMap[componentName] = asynComponents;
+  ConfComponentName_To_ConfComponentInstance_Map[componentName] = asynComponents;
 });

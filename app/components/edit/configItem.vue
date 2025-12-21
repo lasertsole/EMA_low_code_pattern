@@ -3,8 +3,9 @@
     <div class="name">{{ title }}</div>
     <div class="value">
       <component
-        :is="ConfText"
-        :value="value"></component>
+        :is="ConfComponentName_To_ConfComponentInstance_Map[value.config.type]"
+        :value="value">
+      </component>
     </div>
   </div>
 </template>

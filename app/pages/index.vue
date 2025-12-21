@@ -77,6 +77,7 @@
 import { isNil } from 'lodash-es';
 import { onErrorCaptured } from 'vue';
 import type { ComponentPropItemObj } from '~/types';
+
 /****************以下是捕获子组件树中的异常****************/
 onErrorCaptured((err: unknown, instance: ComponentPublicInstance | null) => {
   // 停止错误继续向上传播
