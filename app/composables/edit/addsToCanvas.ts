@@ -2,8 +2,8 @@
 export const componentNameToInfoMap = {
   text: {
     showName: '文本',
-    domProps: { ...transformDefaultPropsToComponentProps(textDomProps) },
-    styleProps: { ...transformDefaultPropsToComponentProps(textStyleProps) }
+    domProps: textDomProps,
+    styleProps: textStyleProps
   }
 };
 

@@ -12,10 +12,10 @@
 <script lang="ts" setup>
 import type { PropType } from 'vue';
 import ConfText from '~/components/confs/text.vue';
-import type { ComponentPropsValue } from '@/types/index.ts';
+import type { ComponentPropItemValueObj } from '@/types/index.ts';
 const { title, value } = defineProps({
-  title: { required: true, type: String as PropType<string> },
-  value: { required: true, type: Object as PropType<ComponentPropsValue> }
+  title: { required: true, type: String },
+  value: { required: true, type: Object as PropType<ComponentPropItemValueObj> }
 });
 </script>
 

@@ -15,7 +15,11 @@
 import type { ComponentProps } from '@/types/index.ts';
 
 // domProps 和 styleProps分离
-const { min, max, step, value } = defineProps(transformDefaultPropsToComponentProps(rangeDomProps));
+const { min, max, step, value } = defineProps(
+  rangeDomProps as {
+    readonly [x: string]: any;
+  }
+);
 const styleProps = reverseDefaultPropsFromComponentProps(useAttrs()?.styleProps as ComponentProps);
 
 const modelValue: Ref<number> = ref(value);

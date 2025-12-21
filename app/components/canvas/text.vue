@@ -10,25 +10,20 @@
       :style="styleProps">
       {{ modelValue }}
     </div>
-    <Transition name="fade">
-      <div
-        class="clear"
-        v-show="!isEmpty(modelValue)"
-        @click.stop="clearFunc()">
-        <img src="@/assets/img/text_clear_btn.svg" />
-      </div>
-    </Transition>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { type ShallowRef } from 'vue';
-import { isEmpty, isNil } from 'lodash-es';
-import type { StyleProps } from '@/types/index.ts';
+import { isEmpty } from 'lodash-es';
+import type { StyleValue } from 'vue';
 
 // domProps 和 styleProps分离
-const { placeholder, readonly, value } = defineProps(transformDefaultPropsToComponentProps(textDomProps));
-const styleProps = useAttrs()?.styleProps as StyleProps;
+const { placeholder, readonly, value } = defineProps(
+  textDomProps as {
+    readonly [x: string]: any;
+  }
+);
+const styleProps = useAttrs()?.styleProps as StyleValue;
 
 const modelValue = ref(value);
 
@@ -50,16 +45,6 @@ function inputFunc(event: Event): void {
     modelValue.value = target.innerHTML;
   }
 }
-
-const inputDom: ShallowRef<HTMLElement | null> = useTemplateRef('inputDom');
-// 清理回调函数
-function clearFunc(): void {
-  modelValue.value = '';
-
-  if (!isNil(inputDom.value)) {
-    inputDom.value.focus();
-  }
-}
 </script>
 
 <style lang="scss" scoped>
@@ -74,40 +59,6 @@ $clearIconSize: 20px;
     &:empty:before {
       content: attr(placeholder);
       color: gray;
-    }
-  }
-
-  > .clear {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    right: 0px;
-    top: 50%;
-    transform: translateY(-50%);
-    @include fixedHeight($clearIconSize);
-
-    > img {
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      height: 100%;
-      width: auto;
-      aspect-ratio: 1 / 1;
-    }
-
-    &.fade-enter-active,
-    &.fade-leave-active {
-      will-change: opacity;
-      transition: opacity 0.3s ease;
-    }
-
-    &.fade-enter-from,
-    &.fade-leave-to {
-      opacity: 0;
-    }
-    &.fade-enter-to,
-    &.fade-leave-from {
-      opacity: 1;
     }
   }
 }

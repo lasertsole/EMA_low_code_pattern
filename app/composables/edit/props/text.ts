@@ -20,7 +20,7 @@ export const textStyleProps: ComponentProps = {
 /** 文本组件 的 非样式属性 */
 export const textDomProps: ComponentProps = {
   ...commonDomProps,
-  value: '',
-  readonly: false,
-  placeholder: '请输入内容'
+  value: { default: '', config: { type: 'MTE' } },
+  readonly: { default: false, config: { type: 'MTE' } },
+  placeholder: { default: '请输入内容', config: { type: 'MTE' } }
 };

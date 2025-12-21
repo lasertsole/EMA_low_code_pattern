@@ -23,13 +23,16 @@
 </template>
 
 <script lang="ts" setup>
-import { type ShallowRef } from 'vue';
+import { type ShallowRef, type StyleValue } from 'vue';
 import { isEmpty, isNil } from 'lodash-es';
-import type { StyleProps } from '@/types/index.ts';
 
 // domProps 和 styleProps分离
-const { value } = defineProps(transformDefaultPropsToComponentProps(textDomProps));
-const styleProps = useAttrs()?.styleProps as StyleProps;
+const { value } = defineProps(
+  textDomProps as {
+    readonly [x: string]: any;
+  }
+);
+const styleProps = useAttrs()?.styleProps as StyleValue;
 
 const modelValue = ref(isNil(value.default) ? value : value.default);
 

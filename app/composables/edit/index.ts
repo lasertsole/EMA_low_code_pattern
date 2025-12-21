@@ -1,39 +1,18 @@
 import { type Reactive, type AsyncComponentLoader } from 'vue';
 import { cloneDeep, isNil, isObject, isFunction, mapValues } from 'lodash-es';
-import { type ComponentProps, type Component, isComponentPropItem } from '@/types/index';
+import {
+  type ComponentProps,
+  type Component,
+  type ComponentPropItemValueObj,
+  isComponentPropItemValueObj,
+  type ComponentPropItemValue,
+  type DefaultValue
+} from '@/types/index';
 import { componentNameToInfoMap } from './addsToCanvas';
 
 /** 组件列表 */
 export const addcomponents: Reactive<Component[]> = shallowReactive([]);
 export const canvasComponents: Reactive<Component[]> = shallowReactive([]);
-
-/** 将默认值props 转换成组件的 props */
-export function transformDefaultPropsToComponentProps(props: ComponentProps | null | undefined): {
-  readonly [key: string]: any;
-} {
-  if (isNil(props)) {
-    return {};
-  }
-
-  return mapValues(props, item => {
-    if (!isNil(item)) {
-      let type: Function | undefined;
-      if (isObject(item) && 'default' in item && !isNil(item.default)) {
-        item = item.default;
-        if (isComponentPropItem(item)) {
-          type = item.type as Function;
-        }
-      }
-
-      return {
-        type: type || item.constructor,
-        default: item
-      };
-    } else {
-      return null;
-    }
-  });
-}
 
 /** 将组件的 props反转换成默认值props */
 export function reverseDefaultPropsFromComponentProps(props: ComponentProps | null | undefined): {
@@ -92,7 +71,8 @@ export function addCanvasComponent(component: Component): void {
   const domProps: ComponentProps = cloneDeep(info.domProps!);
   const styleProps: ComponentProps = cloneDeep(info.styleProps) ?? {};
 
-  const id: ComponentProps = domProps.id as ComponentProps;
+  const id: ComponentPropItemValue = domProps.id as ComponentPropItemValueObj;
+
   if (!isNil(id?.default) && isFunction(id.default)) {
     domProps.id = id.default();
   }

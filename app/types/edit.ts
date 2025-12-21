@@ -1,42 +1,43 @@
 import { isNil } from 'lodash-es';
 import type { ComponentPublicInstance } from 'vue';
 
-/** 具体属性项类型 */
-export interface ComponentPropItem {
-  default: string | number | boolean | Function;
+export type DefaultValue = string | number | boolean | Function;
+
+/** 具体属性项值类型 */
+export interface ComponentPropItemValueObj {
+  default: DefaultValue;
   type?: Function;
   config: { type: string };
 }
 
-/** 具体属性项类型守卫函数 */
-export function isComponentPropItem(obj: unknown): obj is ComponentPropItem {
+/** 是否是 具体属性项值类型 的判断函数*/
+export function isComponentPropItemValueObj(obj: unknown): obj is ComponentPropItemValueObj {
   return (
     typeof obj === 'object' &&
     !isNil(obj) &&
     'default' in obj &&
     'config' in obj &&
-    'type' in (obj as ComponentPropItem).config
+    'type' in (obj as ComponentPropItemValueObj).config
   );
 }
 
-/** 组件属性值类型 */
-export type ComponentPropsValue =
-  | { default: string; type: string }
-  | string
-  | number
-  | boolean
-  | Function
-  | ComponentPropItem
-  | null
-  | undefined;
+/** 具体属性项值类型 */
+export type ComponentPropItemValue = DefaultValue | ComponentPropItemValueObj;
+
+/** 具体属性项类型守卫函数 */
+export function isComponentPropItemValue(obj: unknown): obj is ComponentPropItemValue {
+  return (
+    typeof obj === 'object' &&
+    !isNil(obj) &&
+    'default' in obj &&
+    'config' in obj &&
+    'type' in (obj as ComponentPropItemValueObj).config
+  );
+}
 
 /** 组件类型 */
 export interface ComponentProps {
-  [key: string]: ComponentPropsValue;
-}
-
-export interface StyleProps {
-  [key: string]: string;
+  [key: string]: ComponentPropItemValue;
 }
 
 // 组件 类型
