@@ -1,44 +1,313 @@
-import type { ComponentProps } from '@/types/index.ts';
+import {
+  CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM,
+  COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM,
+  type ComponentProps,
+  type ComponentPropItemConfigOption
+} from '@/types';
 import { v4 as uuidv4 } from 'uuid';
+
+/** 组件属性项配置项单位枚举对象 */
+export const componentPropItemConfigOptionUnit_To_obj_map: {
+  [key in COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM]: ComponentPropItemConfigOption;
+} = {
+  [COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX]: {
+    min: 0,
+    max: Number.MAX_SAFE_INTEGER,
+    unit: COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX
+  },
+  [COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT]: {
+    min: 0,
+    max: 100,
+    unit: COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT
+  },
+  [COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM]: {
+    min: 0,
+    max: Number.MAX_SAFE_INTEGER,
+    unit: COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM
+  },
+  [COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]: {
+    min: 0,
+    max: Number.MAX_SAFE_INTEGER,
+    unit: COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM
+  },
+  [COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.DEG]: {
+    min: -360,
+    max: 360,
+    unit: COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.DEG
+  },
+  [COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.MS]: {
+    min: 0,
+    max: Number.MAX_SAFE_INTEGER,
+    unit: COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.MS
+  },
+  [COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.S]: {
+    min: 0,
+    max: Number.MAX_SAFE_INTEGER,
+    unit: COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.S
+  }
+};
 
 /** 通用样式props */
 export const commonStyleProps: ComponentProps = {
   // size
-  height: { default: 'auto', config: { type: 'number' } },
-  width: { default: 'auto', config: { type: 'number' } },
-  maxHeight: { default: 'auto', config: { type: 'number' } },
-  maxWidth: { default: 'auto', config: { type: 'number' } },
-  minHeight: { default: 'auto', config: { type: 'number' } },
-  minWidth: { default: 'auto', config: { type: 'number' } },
+  height: {
+    default: 'auto',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
+  width: {
+    default: 'auto',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
+  maxHeight: {
+    default: 'auto',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
+  maxWidth: {
+    default: 'auto',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
+  minHeight: {
+    default: 'auto',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
+  minWidth: {
+    default: 'auto',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
 
   // position
-  position: { default: 'static', config: { type: 'select' } },
-  top: { default: '0px', config: { type: 'range' } },
-  right: { default: '0px', config: { type: 'range' } },
-  bottom: { default: '0px', config: { type: 'range' } },
-  left: { default: '0px', config: { type: 'range' } },
+  position: {
+    default: 'static',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.SELECT,
+      options: ['static', 'relative', 'absolute', 'fixed', 'sticky']
+    }
+  },
+  top: {
+    default: '0px',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
+  right: {
+    default: '0px',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
+  bottom: {
+    default: '0px',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
+  left: {
+    default: '0px',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
 
   // border
-  border: { default: '0px', config: { type: 'range' } },
-  borderRadius: { default: '0px', config: { type: 'range' } },
-  borderTop: { default: 'initial', config: { type: 'range' } },
-  borderRight: { default: 'initial', config: { type: 'range' } },
-  borderBottom: { default: 'initial', config: { type: 'range' } },
-  borderLeft: { default: 'initial', config: { type: 'range' } },
-  borderColor: { default: 'initial', config: { type: 'text' } },
-  borderWidth: { default: 'initial', config: { type: 'text' } },
+  border: {
+    default: '0px',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
+  borderRadius: {
+    default: '0px',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
+  borderTop: {
+    default: 'initial',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
+  borderRight: {
+    default: 'initial',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
+  borderBottom: {
+    default: 'initial',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
+  borderLeft: {
+    default: 'initial',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
+  borderColor: {
+    default: 'initial',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
+  borderWidth: {
+    default: 'initial',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
 
   // shadow and opacity
-  boxShadow: { default: 'initial', config: { type: 'text' } },
-  opacity: { default: 'initial', config: { type: 'range' } },
+  boxShadow: {
+    default: 'initial',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.TEXT
+    }
+  },
+  opacity: {
+    default: 'initial',
+    config: {
+      type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.RANGE,
+      options: [
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PERCENT],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.PX],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.EM],
+        componentPropItemConfigOptionUnit_To_obj_map[COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM.REM]
+      ]
+    }
+  },
 
   // geometric
-  backgroundColor: { default: 'initial', config: { type: 'text' } },
-  overflow: { default: 'visible', config: { type: 'select' } }
+  backgroundColor: { default: 'initial', config: { type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.TEXT } },
+  overflow: {
+    default: 'visible',
+    config: { type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.SELECT, options: ['visible', 'hidden'] }
+  }
 };
 
 /** 通用非样式props */
 export const commonDomProps: ComponentProps = {
   //id
-  id: { default: () => uuidv4(), type: String, config: { type: 'text' } }
+  id: { default: () => uuidv4(), type: String, config: { type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM.TEXT } }
 };

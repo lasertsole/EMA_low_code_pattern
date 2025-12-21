@@ -1,10 +1,39 @@
 export type DefaultValue = string | number | boolean | Function;
 
-/** 具体属性项值类型 */
+/** 组件名字映射 枚举值 */
+export enum CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM {
+  MTE = 'mte',
+  TEXT = 'text',
+  RANGE = 'range',
+  SELECT = 'select'
+}
+
+/** 具体属性项值 的 配置选型 的 单位 枚举值 */
+export enum COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM {
+  PX = 'px',
+  EM = 'em',
+  REM = 'rem',
+  PERCENT = '%',
+  DEG = 'deg',
+  MS = 'ms',
+  S = 's'
+}
+
+/** 具体属性项值 的 配置选型 类型 */
+export interface ComponentPropItemConfigOption {
+  min?: number;
+  max?: number;
+  unit?: COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM;
+  textDom?: HTMLElement;
+  vaildate?: (value: DefaultValue) => boolean;
+}
+
+/** 具体属性项值 类型 */
 export interface ComponentPropItemObj {
   default: DefaultValue;
   type?: Function;
-  config: { type: string };
+  vaildate?: (value: DefaultValue) => boolean;
+  config: { type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM; options?: string[] | ComponentPropItemConfigOption[] };
 }
 
 /** 具体属性项值类型 */
@@ -34,10 +63,4 @@ export enum UPDATE_COMPONENT_ENUM {
   MOD = 4,
   /** 选中 */
   SEL = 8
-}
-
-/** 组件名字映射 */
-export enum CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM {
-  MTE = 'mte',
-  string = 'text'
 }
