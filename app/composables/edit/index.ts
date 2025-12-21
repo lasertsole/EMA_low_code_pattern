@@ -1,11 +1,6 @@
 import { type Reactive, type AsyncComponentLoader } from 'vue';
 import { cloneDeep, isNil, isObject, isFunction, mapValues } from 'lodash-es';
-import {
-  type ComponentProps,
-  type Component,
-  type ComponentPropItemValueObj,
-  type ComponentPropItemValue
-} from '@/types/index';
+import { type ComponentProps, type Component, type ComponentPropItemObj, type ComponentPropItem } from '@/types/index';
 import { componentNameToInfoMap } from './addsToCanvas';
 
 /** 组件列表 */
@@ -69,7 +64,7 @@ export function addCanvasComponent(component: Component): void {
   const domProps: ComponentProps = cloneDeep(info.domProps!);
   const styleProps: ComponentProps = cloneDeep(info.styleProps) ?? {};
 
-  const id: ComponentPropItemValue = domProps.id as ComponentPropItemValueObj;
+  const id: ComponentPropItem = domProps.id as ComponentPropItemObj;
 
   if (!isNil(id?.default) && isFunction(id.default)) {
     domProps.id = id.default();

@@ -1,26 +1,26 @@
 import { isNil } from 'lodash-es';
 import { CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM } from './type';
-import type { ComponentPropItemValue, ComponentPropItemValueObj } from './type';
+import type { ComponentPropItem, ComponentPropItemObj } from './type';
 
 /** 是否是 具体属性项值类型 的判断函数*/
-export function isComponentPropItemValueObj(obj: unknown): obj is ComponentPropItemValueObj {
+export function isComponentPropItemObj(obj: unknown): obj is ComponentPropItemObj {
   return (
     typeof obj === 'object' &&
     !isNil(obj) &&
     'default' in obj &&
     'config' in obj &&
-    'type' in (obj as ComponentPropItemValueObj).config
+    'type' in (obj as ComponentPropItemObj).config
   );
 }
 
 /** 具体属性项类型守卫函数 */
-export function isComponentPropItemValue(obj: unknown): obj is ComponentPropItemValue {
+export function isComponentPropItem(obj: unknown): obj is ComponentPropItem {
   return (
     typeof obj === 'object' &&
     !isNil(obj) &&
     'default' in obj &&
     'config' in obj &&
-    'type' in (obj as ComponentPropItemValueObj).config
+    'type' in (obj as ComponentPropItemObj).config
   );
 }
 

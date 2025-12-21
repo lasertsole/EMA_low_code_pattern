@@ -48,7 +48,7 @@
               :key="item[0]">
               <EditConfigItem
                 :title="item[0]"
-                :value="item[1] as ComponentPropItemValueObj">
+                :value="item[1] as ComponentPropItemObj">
               </EditConfigItem>
             </template>
           </div>
@@ -63,7 +63,7 @@
               :key="item[0]">
               <EditConfigItem
                 :title="item[0]"
-                :value="item[1] as ComponentPropItemValueObj">
+                :value="item[1] as ComponentPropItemObj">
               </EditConfigItem>
             </template>
           </div>
@@ -76,7 +76,7 @@
 <script lang="ts" setup>
 import { isNil } from 'lodash-es';
 import { onErrorCaptured } from 'vue';
-import type { ComponentPropItemValueObj } from '~/types';
+import type { ComponentPropItemObj } from '~/types';
 /****************以下是捕获子组件树中的异常****************/
 onErrorCaptured((err: unknown, instance: ComponentPublicInstance | null) => {
   // 停止错误继续向上传播

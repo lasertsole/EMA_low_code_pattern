@@ -1,18 +1,18 @@
 export type DefaultValue = string | number | boolean | Function;
 
 /** 具体属性项值类型 */
-export interface ComponentPropItemValueObj {
+export interface ComponentPropItemObj {
   default: DefaultValue;
   type?: Function;
   config: { type: string };
 }
 
 /** 具体属性项值类型 */
-export type ComponentPropItemValue = DefaultValue | ComponentPropItemValueObj;
+export type ComponentPropItem = DefaultValue | ComponentPropItemObj;
 
 /** 组件类型 */
 export interface ComponentProps {
-  [key: string]: ComponentPropItemValue;
+  [key: string]: ComponentPropItem;
 }
 
 // 组件 类型
