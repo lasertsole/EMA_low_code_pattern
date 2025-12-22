@@ -21,7 +21,7 @@
         <TransitionGroup name="fade">
           <template
             v-for="component in canvasComponents"
-            :key="component.domProps?.id as string">
+            :key="(component.domProps?.id ?? '') as string">
             <CanvasWrapper
               :class="{ selected: component === toRaw(selectedCanvasComponent) }"
               @click.stop="selectCanvasComponent(component)">
@@ -39,6 +39,7 @@
       <div class="title">{{ '属性栏' }}</div>
       <div
         class="list"
+        v-if="!isEmpty(selectedCanvasComponent?.domProps?.id?.default)"
         @component-change="componentChange">
         <div
           class="sub-configs"
@@ -47,7 +48,7 @@
           <div class="list">
             <template
               v-for="item in Object.entries(selectedCanvasComponent.domProps)"
-              :key="JSON.stringify(item[0]) + JSON.stringify(item[1])">
+              :key="selectedCanvasComponent.domProps.id!.default + item[0]">
               <EditConfigItem
                 :title="item[0]"
                 :value="item[1] as ComponentPropItem">
@@ -62,7 +63,7 @@
           <div class="list">
             <template
               v-for="item in Object.entries(selectedCanvasComponent.styleProps)"
-              :key="JSON.stringify(item[0]) + JSON.stringify(item[1])">
+              :key="selectedCanvasComponent.domProps!.id!.default + item[0]">
               <EditConfigItem
                 :title="item[0]"
                 :value="item[1] as ComponentPropItem">
@@ -76,7 +77,7 @@
 </template>
 
 <script lang="ts" setup>
-import { isNil } from 'lodash-es';
+import { isEmpty, isNil } from 'lodash-es';
 import { type ComponentPropItem, UPDATE_COMPONENT_ENUM } from '~/types';
 
 /** 统一处理子组件变化函数 */

@@ -4,7 +4,6 @@
       ref="inputDom"
       class="inputArea"
       @input.stop="inputFunc($event)"
-      contenteditable="true"
       :readonly="readonly"
       :placeholder="placeholder"
       :style="styleProps">

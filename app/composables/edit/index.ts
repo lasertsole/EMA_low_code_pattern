@@ -88,7 +88,7 @@ export function addCanvasComponent(component: Component): void {
 }
 
 /** 选中组件 */
-export const selectedCanvasComponent: Ref<Component | undefined> = ref();
+export const selectedCanvasComponent: Ref<Component | undefined> = shallowRef();
 export function selectCanvasComponent(component: Component): void {
   selectedCanvasComponent.value = component;
 }

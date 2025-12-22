@@ -31,7 +31,7 @@ export interface ComponentPropItemConfigOption {
 /** 具体属性项值 类型 */
 export interface ComponentPropItem {
   default: Value;
-  value: Value;
+  value?: Value;
   type?: Function;
   vaildate?: (value: Value) => boolean;
   config: { type: CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM; options?: string[] | ComponentPropItemConfigOption[] };

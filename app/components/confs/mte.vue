@@ -7,9 +7,7 @@
       class="inputArea"
       @input.stop="inputFunc($event)"
       contenteditable="true"
-      :readonly="readonly">
-      {{ modelValue }}
-    </div>
+      :readonly="readonly"></div>
     <Transition name="fade">
       <div
         class="clear"
@@ -22,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import { type ShallowRef, watch } from 'vue';
+import { type ShallowRef, watch, onMounted } from 'vue';
 import { isEmpty, isNil } from 'lodash-es';
 import { UPDATE_COMPONENT_ENUM } from '~/types';
 
@@ -34,6 +32,14 @@ const { value } = defineProps(
 );
 
 const modelValue = ref(value);
+
+const inputDom: ShallowRef<HTMLElement | null> = useTemplateRef('inputDom');
+
+//给输入框赋初值
+onMounted(() => {
+  if (isNil(inputDom.value)) return;
+  inputDom.value.textContent = modelValue.value;
+});
 
 const emits = defineEmits<{
   (e: UPDATE_COMPONENT_ENUM.MOD, value: unknown): void;
@@ -62,9 +68,10 @@ function inputFunc(event: Event): void {
   }
 }
 
-const inputDom: ShallowRef<HTMLElement | null> = useTemplateRef('inputDom');
 // 清理回调函数
 function clearFunc(): void {
+  if (isNil(inputDom.value)) return;
+  inputDom.value.textContent = '';
   modelValue.value = '';
 
   if (!isNil(inputDom.value)) {
@@ -99,7 +106,6 @@ $textContainerPadding: 0.3rem;
   > .inputArea {
     outline: none;
     word-break: break-all;
-
     &:empty:before {
       color: gray;
     }
