@@ -8,13 +8,15 @@
       :max="max"
       inputmode="numeric"
       :value="modelValue"
-      @input="limitInput" />
+      @input="limitInput"
+      :disabled="disabled" />
     <input
       type="range"
       :min="min"
       :max="max"
       :step="step"
-      v-model="modelValue" />
+      v-model="modelValue"
+      :disabled="disabled" />
 
     <select
       class="fontSelect"
@@ -42,7 +44,7 @@ const { min, max, step, value } = defineProps(
   }
 );
 
-const { options } = toRefs(useAttrs()?.config as ComponentPropItemConfig);
+const { options, selectedOption } = toRefs(useAttrs()?.config as ComponentPropItemConfig);
 
 const modelValue: Ref<number> = ref(value);
 
@@ -64,8 +66,6 @@ function limitInput(e: Event): void {
   const inputDom: HTMLInputElement = e.target as HTMLInputElement;
   let val: number = parseInt(inputDom.value);
 
-  console.log(val);
-  console.log(isNaN(val));
   if (isNaN(val)) {
     val = min;
   } else {
@@ -78,6 +78,10 @@ function limitInput(e: Event): void {
   modelValue.value = val;
   inputDom.value = String(val);
 }
+
+const disabled: Ref<boolean> = computed(() => {
+  return typeof selectedOption === 'string';
+});
 
 watch(
   () => value,
