@@ -64,13 +64,18 @@ function limitInput(e: Event): void {
   const inputDom: HTMLInputElement = e.target as HTMLInputElement;
   let val: number = parseInt(inputDom.value);
 
+  console.log(val);
+  console.log(isNaN(val));
   if (isNaN(val)) {
-    return;
+    val = min;
+  } else {
+    // 核心逻辑：手動截斷
+    if (val > max) val = max;
+    else if (val < min) val = min;
+    inputDom.value = String(val);
   }
 
-  // 核心逻辑：手動截斷
-  if (val > max) val = max;
-  else if (val < min) val = min;
+  modelValue.value = val;
   inputDom.value = String(val);
 }
 
