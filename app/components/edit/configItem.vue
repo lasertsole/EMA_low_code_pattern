@@ -6,8 +6,7 @@
     <div class="value">
       <component
         :is="ConfComponentName_To_ConfComponentInstance_Map[value.config.type]"
-        :value="value.value"
-        :config="value.config">
+        v-bind="value">
       </component>
     </div>
   </div>

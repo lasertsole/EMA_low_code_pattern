@@ -2,30 +2,27 @@
   <div
     ref="root"
     class="root">
-    <!-- <template v-if="disabled">
     <input
       type="number"
-      :min="value?.min"
-      :max="value?.max"
+      :min="min"
+      :max="max"
       inputmode="numeric"
       :value="modelValue"
       @input="limitInput($event)"
-      :disabled="isNil(unit)" />
+      :disabled="disabled" />
+
     <input
       type="range"
-      :min="value.min"
-      :max="value.max"
-      :step="value.step"
+      :min="min"
+      :max="max"
+      :step="step"
       v-model="modelValue"
-      :disabled="isNil(unit)" />
-    </template> -->
+      :disabled="disabled" />
 
     <select
       v-if="!isEmpty(componentPropItemConfig.options)"
       @change="selectChange($event)">
-      <template
-        v-for="item in componentPropItemConfig.options"
-        :key="item.unit">
+      <template v-for="item in componentPropItemConfig.options">
         <option>
           {{ typeof item === 'string' ? item : item.unit }}
         </option>
@@ -38,7 +35,6 @@
 import {
   type ComponentPropItemConfig,
   type ComponentPropItemConfigOption,
-  type ComponentPropItemConfigOptionObj,
   isComponentPropItemConfigOptionObj,
   MOD_COMPONENT_EVENT_ENUM
 } from '~/types';
@@ -48,16 +44,23 @@ import { isNil, isEmpty, find, isString } from 'lodash-es';
 // domProps 和 styleProps分离
 const props = defineProps({
   value: {
-    type: Object as PropType<ComponentPropItemConfigOptionObj>,
+    type: Object as PropType<ComponentPropItemConfigOption>,
     required: true
   }
 });
+
+const componentPropItemConfig: Reactive<ComponentPropItemConfig> = useAttrs()
+  ?.config as Reactive<ComponentPropItemConfig>;
+
+const rootDom: ShallowRef<HTMLDivElement | null> = useTemplateRef('root');
 
 const min: Ref<number> = ref(0);
 const max: Ref<number> = ref(0);
 const modelValue: Ref<number> = ref(0);
 const step: Ref<number> = ref(0);
 const unit: Ref<string | undefined> = ref();
+const disabled: ComputedRef<boolean> = computed(() => isNil(unit.value));
+
 watchEffect(() => {
   if (isString(props.value)) {
     unit.value = undefined;
@@ -77,39 +80,31 @@ watchEffect(() => {
     unit.value = props.value.unit;
   }
 });
-const componentPropItemConfig: Reactive<ComponentPropItemConfig> = useAttrs()
-  ?.config as Reactive<ComponentPropItemConfig>;
 
-// const modelValue: Ref<number> = ref(value);
+watch(modelValue, newVal => {
+  if (!isNil(rootDom.value)) {
+    sendUpdateEvent({ emitDom: rootDom.value, value: newVal });
+  }
+});
 
-const rootDom: ShallowRef<HTMLDivElement | null> = useTemplateRef('root');
+/************以下是输入框逻辑***********/
+function limitInput(e: Event): void {
+  const inputDom: HTMLInputElement = e.target as HTMLInputElement;
+  let val: number = parseInt(inputDom.value);
 
-// const disabled: Ref<boolean> = ref(false);
+  if (isNaN(val)) {
+    val = min.value;
+  } else {
+    // 核心逻辑：手動截斷
+    if (val > max.value) val = max.value;
+    else if (val < min.value) val = min.value;
+    inputDom.value = String(val);
+  }
 
-// watch(modelValue, newVal => {
-//   if (!isNil(rootDom.value)) {
-//     sendUpdateEvent({ emitDom: rootDom.value, value: newVal });
-//   }
-// });
-
-// /************以下是输入框逻辑***********/
-// function limitInput(e: Event): void {
-//   const inputDom: HTMLInputElement = e.target as HTMLInputElement;
-//   let val: number = parseInt(inputDom.value);
-
-//   if (isNaN(val)) {
-//     val = min;
-//   } else {
-//     // 核心逻辑：手動截斷
-//     if (val > max) val = max;
-//     else if (val < min) val = min;
-//     inputDom.value = String(val);
-//   }
-
-//   modelValue.value = val;
-//   inputDom.value = String(val);
-// }
-// /************以上是输入框逻辑***********/
+  modelValue.value = val;
+  inputDom.value = String(val);
+}
+/************以上是输入框逻辑***********/
 
 /************以下是控制多选框逻辑***********/
 function selectChange(e: Event): void {
