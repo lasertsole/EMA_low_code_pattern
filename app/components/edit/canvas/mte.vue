@@ -21,14 +21,14 @@
       contenteditable="true"
       :readonly="readonly"
       :style="styleProps">
-      {{ 12312312 }}
+      {{ '0123456789' }}
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { type ShallowRef, type StyleValue } from 'vue';
-import { isEmpty, isNil } from 'lodash-es';
+import { isEmpty, isEqual, isNil } from 'lodash-es';
 
 // domProps 和 styleProps分离
 const { value } = defineProps(
@@ -52,16 +52,14 @@ function isMteRoot(node: Node | null | undefined): boolean {
   return false;
 }
 
-//从range中获取包含range的最近父HTML
-function fromRangeGetNearestContainer(range: Range): HTMLElement | null {
-  let selectedNode: Node = range.commonAncestorContainer;
-
-  if (selectedNode.nodeType === Node.TEXT_NODE && !isNil(selectedNode.parentNode)) {
-    selectedNode = selectedNode.parentNode;
+//获取包含node的最近ELEMENT_NODE元素
+function fromNodeGetNearestContainerNode(node: Node): HTMLElement | null {
+  if (node.nodeType === Node.TEXT_NODE && !isNil(node.parentNode)) {
+    node = node.parentNode;
   }
 
-  if (selectedNode.parentNode instanceof HTMLElement) {
-    return selectedNode as HTMLElement;
+  if (node.parentNode instanceof HTMLElement) {
+    return node as HTMLElement;
   } else {
     return null;
   }
@@ -76,6 +74,108 @@ function isEqualClass(classA: DOMTokenList | null | undefined, classB: DOMTokenL
   return setA.size === setB.size && [...setA].every(v => setB.has(v));
 }
 
+function getSpanInRange(range: Range) {
+  const startNode = range.startContainer;
+  const endNode = range.endContainer;
+  const commonAncestorContainer = range.commonAncestorContainer;
+  const startOffset = range.startOffset;
+  const endOffset = range.endOffset;
+
+  console.log(range);
+
+  console.log('startNode: ' + startNode);
+  console.log('endNode: ' + endNode);
+  console.log('commonAncestorContainerNode: ' + fromNodeGetNearestContainerNode(commonAncestorContainer));
+  console.log('startOffset: ' + startOffset);
+  console.log('endOffset: ' + endOffset);
+  console.log('endOffset - startOffset: ' + (endOffset - startOffset));
+  console.log('commonAncestorContainer.textContent?.length: ' + commonAncestorContainer.textContent?.length);
+  console.log('isEqual(startNode, endNode): ' + isEqual(startNode, endNode));
+}
+
+function normalizeSelectionProcess({
+  range,
+  selection,
+  className
+}: {
+  range: Range;
+  selection: Selection;
+  className: string;
+}): void {
+  /* 1. 提取选中的 HTML 内容 */
+  const fragment: DocumentFragment = range.extractContents();
+
+  /*  2. 创建包裹容器 */
+  const span: HTMLSpanElement = document.createElement('span');
+  span.classList.add(className);
+  span.appendChild(fragment);
+
+  /* 3. 在原位置插入加粗后的内容 */
+  range.insertNode(span);
+
+  /* 4. 合并前后类型相同的元素 */
+  // 在 fragment 内部的起点和终点埋下标记
+  const startMarker = document.createElement('span');
+  const endMarker = document.createElement('span');
+  startMarker.style.display = 'none'; // 隐藏标记
+  endMarker.style.display = 'none';
+  // 将标记放入 span 的首尾
+  span.prepend(startMarker);
+  span.append(endMarker);
+
+  span.parentElement?.normalize(); //清理因range.extractContents产生的前后#text
+  const previousSibling: HTMLElement | null =
+    !isNil(span.previousSibling) && span.previousSibling.nodeType === Node.ELEMENT_NODE
+      ? (span.previousSibling as HTMLElement)
+      : null; // 获取选中dom的前邻接HTMLElement
+  const nextSibling: HTMLElement | null =
+    !isNil(span.nextSibling) && span.nextSibling.nodeType === Node.ELEMENT_NODE
+      ? (span.nextSibling as HTMLElement)
+      : null; // 获取选中dom的后邻接HTMLElement
+
+  if (
+    !isNil(previousSibling) &&
+    previousSibling.childNodes.length > 0 &&
+    isEqualClass(previousSibling.classList, span.classList)
+  ) {
+    span.prepend(...Array.from(previousSibling.childNodes));
+    previousSibling.remove();
+  }
+
+  if (!isNil(nextSibling) && nextSibling.childNodes.length > 0 && isEqualClass(nextSibling.classList, span.classList)) {
+    span.append(...Array.from(nextSibling.childNodes));
+    nextSibling.remove();
+  }
+
+  /* 5. 刷新选取 */
+  selection.removeAllRanges();
+  const newRange = document.createRange();
+  newRange.setStartAfter(startMarker);
+  newRange.setEndBefore(endMarker);
+
+  selection.addRange(newRange);
+
+  // 最后移除标记，保持 DOM 干净
+  startMarker.remove();
+  endMarker.remove();
+
+  /* 6. 合并span内部的碎片 */
+  span.normalize();
+
+  /* 7. 合并mteArea表层的碎片 */
+  inputDom.value!.normalize();
+}
+
+function normalizeSelectionReverse({
+  range,
+  selection,
+  className
+}: {
+  range: Range;
+  selection: Selection;
+  className: string;
+}): void {}
+
 // 多文本处理
 function mteProcess(className: string): void {
   const selection = window.getSelection();
@@ -85,69 +185,63 @@ function mteProcess(className: string): void {
     for (let i = 0; i < selection.rangeCount; i++) {
       const range: Range = selection.getRangeAt(i);
 
-      /* 1. 提取选中的 HTML 内容 */
-      const fragment: DocumentFragment = range.extractContents();
+      const commonAncestorContainer = fromNodeGetNearestContainerNode(range.commonAncestorContainer)!;
 
-      /*  2. 创建包裹容器 */
-      const span: HTMLSpanElement = document.createElement('span');
-      span.classList.add(className);
-      span.appendChild(fragment);
+      const startNode = range.startContainer;
+      const endNode = range.endContainer;
+      const startOffset = range.startOffset;
+      const endOffset = range.endOffset;
+      if (isEqual(startNode, endNode)) {
+        if (isMteRoot(commonAncestorContainer)) {
+          normalizeSelectionProcess({ range, selection, className });
+        } else {
+          let targetNode: Node | null = startNode;
+          while (!isNil(targetNode.firstChild)) {
+            targetNode = targetNode.firstChild;
+          }
 
-      /* 3. 在原位置插入加粗后的内容 */
-      range.insertNode(span);
+          if (
+            startNode.nodeType === Node.ELEMENT_NODE ||
+            endOffset - startOffset === commonAncestorContainer?.textContent?.length
+          ) {
+            /* 1.在目标节点前后插入标记 */
+            const startMarker = document.createElement('span');
+            const endMarker = document.createElement('span');
+            startMarker.style.display = 'none'; // 隐藏标记
+            endMarker.style.display = 'none';
 
-      /* 4. 合并前后类型相同的元素 */
-      // 在 fragment 内部的起点和终点埋下标记
-      const startMarker = document.createElement('span');
-      const endMarker = document.createElement('span');
-      startMarker.style.display = 'none'; // 隐藏标记
-      endMarker.style.display = 'none';
-      // 将标记放入 span 的首尾
-      span.prepend(startMarker);
-      span.append(endMarker);
+            commonAncestorContainer.parentNode?.insertBefore(startMarker, commonAncestorContainer);
+            commonAncestorContainer.parentNode?.insertBefore(endMarker, commonAncestorContainer.nextSibling);
 
-      span.parentElement?.normalize(); //清理因range.extractContents产生的前后#text
-      const previousSibling: HTMLElement | null =
-        !isNil(span.previousSibling) && span.previousSibling.nodeType === Node.ELEMENT_NODE
-          ? (span.previousSibling as HTMLElement)
-          : null; // 获取选中dom的前邻接HTMLElement
-      const nextSibling: HTMLElement | null =
-        !isNil(span.nextSibling) && span.nextSibling.nodeType === Node.ELEMENT_NODE
-          ? (span.nextSibling as HTMLElement)
-          : null; // 获取选中dom的后邻接HTMLElement
+            /* 2.替换目标节点 为 目标节点的内部节点 */
+            const textContent = commonAncestorContainer.innerHTML ?? '';
+            const textNode = document.createTextNode(textContent);
+            commonAncestorContainer.replaceWith(textNode);
 
-      if (
-        !isNil(previousSibling) &&
-        previousSibling.childNodes.length > 0 &&
-        isEqualClass(previousSibling.classList, span.classList)
-      ) {
-        span.prepend(...Array.from(previousSibling.childNodes));
-        previousSibling.remove();
+            /* 3.删除目标节点 */
+            commonAncestorContainer.remove();
+
+            /* 4.刷新选中区域 */
+            selection.removeAllRanges();
+            const newRange = document.createRange();
+            newRange.setStartAfter(startMarker);
+            newRange.setEndBefore(endMarker);
+            selection.addRange(newRange);
+
+            /* 5.最后移除标记，保持 DOM 干净 */
+            startMarker.remove();
+            endMarker.remove();
+
+            /* 6. 合并mteArea表层的碎片 */
+            inputDom.value!.normalize();
+          } else {
+          }
+        }
+      } else {
+        if (isMteRoot(commonAncestorContainer)) {
+        } else {
+        }
       }
-
-      if (
-        !isNil(nextSibling) &&
-        nextSibling.childNodes.length > 0 &&
-        isEqualClass(nextSibling.classList, span.classList)
-      ) {
-        span.append(...Array.from(nextSibling.childNodes));
-        nextSibling.remove();
-      }
-
-      /* 5. 刷新选取 */
-      selection.removeAllRanges();
-      const newRange = document.createRange();
-      newRange.setStartAfter(startMarker);
-      newRange.setEndBefore(endMarker);
-
-      selection.addRange(newRange);
-
-      // 最后移除标记，保持 DOM 干净
-      startMarker.remove();
-      endMarker.remove();
-
-      /* 6. 合并span内部的碎片 */
-      span.normalize();
     }
   }
 }
@@ -167,7 +261,16 @@ const operationOptions: { name: string; process: () => void }[] = reactive([
   },
   {
     name: '下划线',
-    process: () => {}
+    process: () => {
+      const selection = window.getSelection();
+      if (isNil(selection)) return;
+      if (selection?.rangeCount >= 1) {
+        for (let i = 0; i < selection.rangeCount; i++) {
+          const range: Range = selection.getRangeAt(i);
+          getSpanInRange(range);
+        }
+      }
+    }
   }
 ]);
 
