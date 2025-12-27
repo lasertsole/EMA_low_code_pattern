@@ -83,8 +83,8 @@ function getSpanInRange(range: Range) {
 
   console.log(range);
 
-  console.log('startNode: ' + startNode);
-  console.log('endNode: ' + endNode);
+  console.log(startNode);
+  console.log(endNode);
   console.log('commonAncestorContainerNode: ' + fromNodeGetNearestContainerNode(commonAncestorContainer));
   console.log('startOffset: ' + startOffset);
   console.log('endOffset: ' + endOffset);
@@ -182,65 +182,89 @@ function mteProcess(className: string): void {
   if (isNil(selection)) return;
 
   if (selection?.rangeCount >= 1) {
-    for (let i = 0; i < selection.rangeCount; i++) {
-      const range: Range = selection.getRangeAt(i);
+    const range: Range = selection.getRangeAt(0);
 
-      const commonAncestorContainer = fromNodeGetNearestContainerNode(range.commonAncestorContainer)!;
+    const commonAncestorContainer = fromNodeGetNearestContainerNode(range.commonAncestorContainer)!;
 
-      const startNode = range.startContainer;
-      const endNode = range.endContainer;
-      const startOffset = range.startOffset;
-      const endOffset = range.endOffset;
-      if (isEqual(startNode, endNode)) {
-        if (isMteRoot(commonAncestorContainer)) {
-          normalizeSelectionProcess({ range, selection, className });
-        } else {
-          let targetNode: Node | null = startNode;
-          while (!isNil(targetNode.firstChild)) {
-            targetNode = targetNode.firstChild;
-          }
+    let startNode = range.startContainer;
+    let endNode = range.endContainer;
+    let startOffset = range.startOffset;
+    let endOffset = range.endOffset;
 
-          if (
-            startNode.nodeType === Node.ELEMENT_NODE ||
-            endOffset - startOffset === commonAncestorContainer?.textContent?.length
-          ) {
-            /* 1.在目标节点前后插入标记 */
-            const startMarker = document.createElement('span');
-            const endMarker = document.createElement('span');
-            startMarker.style.display = 'none'; // 隐藏标记
-            endMarker.style.display = 'none';
+    // 如果选区开头在mteArea根节点，则将选区开头向下降级
+    if (isMteRoot(startNode) && startOffset === 0) {
+      startNode = startNode.firstChild!;
+      startOffset = 0;
+    }
 
-            commonAncestorContainer.parentNode?.insertBefore(startMarker, commonAncestorContainer);
-            commonAncestorContainer.parentNode?.insertBefore(endMarker, commonAncestorContainer.nextSibling);
-
-            /* 2.替换目标节点 为 目标节点的内部节点 */
-            const textContent = commonAncestorContainer.innerHTML ?? '';
-            const textNode = document.createTextNode(textContent);
-            commonAncestorContainer.replaceWith(textNode);
-
-            /* 3.删除目标节点 */
-            commonAncestorContainer.remove();
-
-            /* 4.刷新选中区域 */
-            selection.removeAllRanges();
-            const newRange = document.createRange();
-            newRange.setStartAfter(startMarker);
-            newRange.setEndBefore(endMarker);
-            selection.addRange(newRange);
-
-            /* 5.最后移除标记，保持 DOM 干净 */
-            startMarker.remove();
-            endMarker.remove();
-
-            /* 6. 合并mteArea表层的碎片 */
-            inputDom.value!.normalize();
-          } else {
-          }
-        }
+    // 如果选区结尾在mteArea根节点，则将选区结尾向下降级
+    if (isMteRoot(endNode) && endOffset === 1) {
+      endNode = endNode.lastChild!;
+      if (endNode.nodeType === Node.TEXT_NODE) {
+        endOffset = endNode.textContent!.length ?? 1;
       } else {
-        if (isMteRoot(commonAncestorContainer)) {
-        } else {
+        endOffset = 1;
+      }
+    }
+
+    if (isEqual(startNode, endNode)) {
+      if (isMteRoot(commonAncestorContainer)) {
+        normalizeSelectionProcess({ range, selection, className });
+      } else {
+        let targetNode: Node | null = startNode;
+        while (!isNil(targetNode.firstChild)) {
+          targetNode = targetNode.firstChild;
         }
+
+        if (
+          startNode.nodeType === Node.ELEMENT_NODE ||
+          endOffset - startOffset === commonAncestorContainer?.textContent?.length
+        ) {
+          // if (commonAncestorContainer.classList.contains(className)) {
+          //   if (commonAncestorContainer.classList.length >= 2) {
+          //     commonAncestorContainer.classList.remove(className);
+          //   } else {
+          //   }
+          // } else {
+          //   commonAncestorContainer.classList.add(className);
+          // }
+          /* 1.在目标节点前后插入标记 */
+          const startMarker = document.createElement('span');
+          const endMarker = document.createElement('span');
+          startMarker.style.display = 'none'; // 隐藏标记
+          endMarker.style.display = 'none';
+
+          commonAncestorContainer.parentNode?.insertBefore(startMarker, commonAncestorContainer);
+          commonAncestorContainer.parentNode?.insertBefore(endMarker, commonAncestorContainer.nextSibling);
+
+          /* 2.替换目标节点 为 目标节点的内部节点 */
+          const textContent = commonAncestorContainer.textContent ?? '';
+          const textNode = document.createTextNode(textContent);
+          commonAncestorContainer.replaceWith(textNode);
+
+          /* 3.删除目标节点 */
+          commonAncestorContainer.remove();
+
+          /* 4.刷新选中区域 */
+          selection.removeAllRanges();
+          const newRange = document.createRange();
+          newRange.setStartAfter(startMarker);
+          newRange.setEndBefore(endMarker);
+          selection.addRange(newRange);
+
+          /* 5.最后移除标记，保持 DOM 干净 */
+          startMarker.remove();
+          endMarker.remove();
+
+          /* 6. 合并mteArea表层的碎片 */
+          inputDom.value!.normalize();
+        } else {
+          console.log('13');
+        }
+      }
+    } else {
+      if (isMteRoot(commonAncestorContainer)) {
+      } else {
       }
     }
   }
