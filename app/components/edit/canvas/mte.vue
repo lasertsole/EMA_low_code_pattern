@@ -355,6 +355,56 @@ function wrappedSelectionProcess({
         inputDom.value!.normalize();
       }
     } else {
+      /* 1. 提取选中的 HTML 内容 */
+      const oriClasses: string[] = Array.from(commonAncestorContainer.classList);
+      const fragment: DocumentFragment = range.extractContents();
+      const span: HTMLSpanElement = document.createElement('span');
+      span.classList.add(className, ...oriClasses);
+      span.appendChild(fragment);
+
+      /* 2. 提取选区左侧元素并重新包装后插入 */
+      const afterRange = document.createRange();
+      afterRange.setStart(range.commonAncestorContainer, range.endOffset);
+      afterRange.setEnd(range.commonAncestorContainer, range.commonAncestorContainer.textContent!.length);
+      const afterFragment: DocumentFragment = afterRange.extractContents();
+      const afterSpan: HTMLSpanElement = document.createElement('span');
+      afterSpan.classList.add(...oriClasses);
+      afterSpan.appendChild(afterFragment);
+      afterRange.insertNode(afterSpan);
+
+      /* 3. 插入选取元素 */
+      afterRange.insertNode(span);
+
+      /* 4. 提取选区右侧元素并重新包装后插入 */
+      const beforeRange = document.createRange();
+      beforeRange.setStart(range.commonAncestorContainer, 0);
+      beforeRange.setEnd(range.commonAncestorContainer, range.startOffset);
+      const beforeFragment: DocumentFragment = beforeRange.extractContents();
+      const beforeSpan: HTMLSpanElement = document.createElement('span');
+      beforeSpan.classList.add(...oriClasses);
+      beforeSpan.appendChild(beforeFragment);
+      beforeRange.insertNode(beforeSpan);
+
+      /* 5. 拆包父元素 */
+      unwrapEleNode(commonAncestorContainer);
+
+      /* 6. 重置选取 */
+      selection.removeAllRanges();
+      const newRange = document.createRange();
+      newRange.setStartAfter(beforeSpan);
+      newRange.setEndBefore(afterSpan);
+      selection.addRange(newRange);
+
+      /* 7. 去除空span */
+      if ((beforeSpan.textContent?.length ?? 0) === 0) {
+        beforeSpan.remove();
+      }
+      if ((afterSpan.textContent?.length ?? 0) === 0) {
+        afterSpan.remove();
+      }
+
+      /* 8. 合并mteArea表层的碎片 */
+      inputDom.value!.normalize();
     }
   }
 }
