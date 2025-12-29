@@ -221,30 +221,24 @@ function wrappedSelectionProcess({
   endOffset: number;
   className: string;
 }): void {
-  let targetNode: Node | null = startNode;
-  while (!isNil(targetNode.firstChild)) {
-    targetNode = targetNode.firstChild;
-  }
-
   if (
     startNode.nodeType === Node.ELEMENT_NODE ||
     endOffset - startOffset === commonAncestorContainer?.childNodes?.length
   ) {
     if (commonAncestorContainer.classList.contains(className)) {
       if (commonAncestorContainer.classList.length >= 2) {
-        const targetNode: HTMLElement = commonAncestorContainer;
         const currentLength: number = commonAncestorContainer.textContent?.length ?? 0;
-        const previousSiblingLength: number = targetNode.previousSibling?.textContent?.length ?? 0;
+        const previousSiblingLength: number = commonAncestorContainer.previousSibling?.textContent?.length ?? 0;
         /* 1. 清除要删除的类型 */
-        targetNode.classList.remove(className);
+        commonAncestorContainer.classList.remove(className);
 
         /* 2. 合并相同类型的前后节点 */
-        mergeSiblingNode(targetNode);
+        mergeSiblingNode(commonAncestorContainer);
 
         /* 3.重置选区 */
         selection.removeAllRanges();
         const newRange: Range = document.createRange();
-        const textNode: Node = targetNode.firstChild!;
+        const textNode: Node = commonAncestorContainer.firstChild!;
         newRange.setStart(textNode, previousSiblingLength);
         newRange.setEnd(textNode, previousSiblingLength + currentLength);
         selection.addRange(newRange);
@@ -281,7 +275,21 @@ function wrappedSelectionProcess({
         inputDom.value!.normalize();
       }
     } else {
+      /* 1. 添加类型 */
       commonAncestorContainer.classList.add(className);
+      const currentLength: number = commonAncestorContainer.textContent?.length ?? 0;
+      const previousSiblingLength: number = commonAncestorContainer.previousSibling?.textContent?.length ?? 0;
+
+      /* 2. 合并相同类型的前后节点 */
+      mergeSiblingNode(commonAncestorContainer);
+
+      /* 3.重置选区 */
+      selection.removeAllRanges();
+      const newRange: Range = document.createRange();
+      const textNode: Node = commonAncestorContainer.firstChild!;
+      newRange.setStart(textNode, previousSiblingLength);
+      newRange.setEnd(textNode, previousSiblingLength + currentLength);
+      selection.addRange(newRange);
     }
   } else {
     if (commonAncestorContainer.classList.contains(className)) {
@@ -444,7 +452,7 @@ function mteProcess(className: string): void {
 
     // 要处理的选取不在mteArea范围内则退出，以免影响到mteArea范围之外
     // range为折叠状态时（内部无任何元素）退出
-    if (!inputDom.value?.contains(range.commonAncestorContainer) && !range.collapsed) return;
+    if (!inputDom.value?.contains(range.commonAncestorContainer) || range.collapsed) return;
 
     let commonAncestorContainer: HTMLElement = fromNodeGetNearestContainerNode(range.commonAncestorContainer)!;
 
