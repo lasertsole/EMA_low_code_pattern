@@ -221,9 +221,11 @@ function wrappedSelectionProcess({
   endOffset: number;
   className: string;
 }): void {
+  // 选中范围和样式范围是否完全相等
   if (
     startNode.nodeType === Node.ELEMENT_NODE ||
-    endOffset - startOffset === commonAncestorContainer?.childNodes?.length
+    (isAllTextNode(commonAncestorContainer?.childNodes) &&
+      endOffset - startOffset === commonAncestorContainer?.firstChild?.textContent?.length)
   ) {
     if (commonAncestorContainer.classList.contains(className)) {
       if (commonAncestorContainer.classList.length >= 2) {
@@ -465,6 +467,8 @@ function mteProcess(className: string): void {
     let endOffset: number = range.endOffset;
 
     // 如果mte内全是文本节点，则进行降级
+    console.log(commonAncestorContainer.childNodes);
+    console.log(isAllTextNode(commonAncestorContainer.childNodes));
     if (isAllTextNode(commonAncestorContainer.childNodes)) {
       // 如果选区开头在mteArea根节点，则将选区开头向下降级
       if (isMteRoot(startNode) && startOffset === 0) {
