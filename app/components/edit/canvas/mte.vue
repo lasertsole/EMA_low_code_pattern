@@ -28,7 +28,7 @@
 
 <script lang="ts" setup>
 import { type ShallowRef, type StyleValue } from 'vue';
-import { isEmpty, isEqual, isNil, merge } from 'lodash-es';
+import { isEmpty, isEqual, isNil } from 'lodash-es';
 
 // domProps 和 styleProps分离
 const { value } = defineProps(
@@ -123,22 +123,32 @@ function unwrapEleNode(targetNode: HTMLElement, targetClasses?: string[]): void 
   targetNode.remove();
 }
 
+// 是否子节点全是文本节点？
+function isAllTextNode(nodes: NodeListOf<ChildNode>): boolean {
+  if (nodes.length < 0) return false;
+  let res = true;
+  for (const node of nodes) {
+    res = res && node.nodeType === Node.TEXT_NODE;
+    if (!res) break;
+  }
+  return res;
+}
+
 function getSpanInRange(range: Range): void {
-  const startNode = range.startContainer;
-  const endNode = range.endContainer;
-  const commonAncestorContainer = range.commonAncestorContainer;
-  const startOffset = range.startOffset;
-  const endOffset = range.endOffset;
+  let startNode = range.startContainer;
+  let endNode = range.endContainer;
+  let commonAncestorContainer = range.commonAncestorContainer;
+  let startOffset = range.startOffset;
+  let endOffset = range.endOffset;
 
   console.log(range);
-
   console.log(startNode);
   console.log(endNode);
   console.log('commonAncestorContainerNode: ' + fromNodeGetNearestContainerNode(commonAncestorContainer));
   console.log('startOffset: ' + startOffset);
   console.log('endOffset: ' + endOffset);
   console.log('endOffset - startOffset: ' + (endOffset - startOffset));
-  console.log('commonAncestorContainer.textContent?.length: ' + commonAncestorContainer.textContent?.length);
+  console.log('commonAncestorContainer.childNodes?.length: ' + commonAncestorContainer.childNodes?.length);
   console.log('isEqual(startNode, endNode): ' + isEqual(startNode, endNode));
 }
 
@@ -218,11 +228,26 @@ function wrappedSelectionProcess({
 
   if (
     startNode.nodeType === Node.ELEMENT_NODE ||
-    endOffset - startOffset === commonAncestorContainer?.textContent?.length
+    endOffset - startOffset === commonAncestorContainer?.childNodes?.length
   ) {
     if (commonAncestorContainer.classList.contains(className)) {
       if (commonAncestorContainer.classList.length >= 2) {
-        commonAncestorContainer.classList.remove(className);
+        const targetNode: HTMLElement = commonAncestorContainer;
+        const currentLength: number = commonAncestorContainer.textContent?.length ?? 0;
+        const previousSiblingLength: number = targetNode.previousSibling?.textContent?.length ?? 0;
+        /* 1. 清除要删除的类型 */
+        targetNode.classList.remove(className);
+
+        /* 2. 合并相同类型的前后节点 */
+        mergeSiblingNode(targetNode);
+
+        /* 3.重置选区 */
+        selection.removeAllRanges();
+        const newRange: Range = document.createRange();
+        const textNode: Node = targetNode.firstChild!;
+        newRange.setStart(textNode, previousSiblingLength);
+        newRange.setEnd(textNode, previousSiblingLength + currentLength);
+        selection.addRange(newRange);
       } else {
         /* 1.在目标节点前后插入标记 */
         const startMarker = document.createElement('span');
@@ -243,7 +268,7 @@ function wrappedSelectionProcess({
 
         /* 4.刷新选中区域 */
         selection.removeAllRanges();
-        const newRange = document.createRange();
+        const newRange: Range = document.createRange();
         newRange.setStartAfter(startMarker);
         newRange.setEndBefore(endMarker);
         selection.addRange(newRange);
@@ -418,29 +443,43 @@ function mteProcess(className: string): void {
     const range: Range = selection.getRangeAt(0);
 
     // 要处理的选取不在mteArea范围内则退出，以免影响到mteArea范围之外
-    if (!inputDom.value?.contains(range.commonAncestorContainer)) return;
+    // range为折叠状态时（内部无任何元素）退出
+    if (!inputDom.value?.contains(range.commonAncestorContainer) && !range.collapsed) return;
 
-    const commonAncestorContainer: HTMLElement = fromNodeGetNearestContainerNode(range.commonAncestorContainer)!;
+    let commonAncestorContainer: HTMLElement = fromNodeGetNearestContainerNode(range.commonAncestorContainer)!;
+
+    // 如果mteArea内不存在任何node，则直接退出
+    if (commonAncestorContainer.childNodes.length === 0) return;
 
     let startNode: Node = range.startContainer;
     let endNode: Node = range.endContainer;
     let startOffset: number = range.startOffset;
     let endOffset: number = range.endOffset;
 
-    // 如果选区开头在mteArea根节点，则将选区开头向下降级
-    if (isMteRoot(startNode) && startOffset === 0) {
-      startNode = startNode.firstChild!;
-      startOffset = 0;
-    }
-
-    // 如果选区结尾在mteArea根节点，则将选区结尾向下降级
-    if (isMteRoot(endNode) && endOffset === 1) {
-      endNode = endNode.lastChild!;
-      if (endNode.nodeType === Node.TEXT_NODE) {
-        endOffset = endNode.textContent!.length ?? 1;
-      } else {
-        endOffset = 1;
+    // 如果mte内全是文本节点，则进行降级
+    if (isAllTextNode(commonAncestorContainer.childNodes)) {
+      // 如果选区开头在mteArea根节点，则将选区开头向下降级
+      if (isMteRoot(startNode) && startOffset === 0) {
+        startNode = startNode.firstChild!;
+        startOffset = 0;
       }
+
+      // 如果选区结尾在mteArea根节点，则将选区结尾向下降级
+      if (isMteRoot(endNode) && endOffset === 1) {
+        endNode = endNode.lastChild!;
+        if (endNode.nodeType === Node.TEXT_NODE) {
+          endOffset = endNode.textContent?.length ?? 1;
+        } else {
+          endOffset = 1;
+        }
+      }
+    } else if (endOffset - startOffset === 1) {
+      // 如果mte内不全是文本节点，且endOffset - startOffset为1，则进行降级
+      startNode = commonAncestorContainer.childNodes[startOffset]!;
+      endNode = startNode;
+      commonAncestorContainer = fromNodeGetNearestContainerNode(endNode)!;
+      startOffset = 0;
+      endOffset = endNode.textContent?.length ?? 1;
     }
 
     if (isEqual(startNode, endNode)) {
