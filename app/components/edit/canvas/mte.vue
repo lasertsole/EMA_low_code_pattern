@@ -28,7 +28,7 @@
 
 <script lang="ts" setup>
 import { type ShallowRef, type StyleValue } from 'vue';
-import { isEmpty, isEqual, isNil } from 'lodash-es';
+import { cloneDeep, constant, isEmpty, isEqual, isNil } from 'lodash-es';
 
 // domProps 和 styleProps分离
 const { value } = defineProps(
@@ -135,21 +135,19 @@ function isAllTextNode(nodes: NodeListOf<ChildNode>): boolean {
 }
 
 function getSpanInRange(range: Range): void {
-  let startNode = range.startContainer;
-  let endNode = range.endContainer;
-  let commonAncestorContainer = range.commonAncestorContainer;
-  let startOffset = range.startOffset;
-  let endOffset = range.endOffset;
+  const { startContainer, endContainer, commonAncestorContainer, startOffset, endOffset, collapsed } = range;
 
-  console.log(range);
-  console.log(startNode);
-  console.log(endNode);
-  console.log('commonAncestorContainerNode: ' + fromNodeGetNearestContainerNode(commonAncestorContainer));
+  console.log(startContainer);
+  console.log(endContainer);
+  console.log(commonAncestorContainer);
   console.log('startOffset: ' + startOffset);
   console.log('endOffset: ' + endOffset);
   console.log('endOffset - startOffset: ' + (endOffset - startOffset));
+  console.log('collapsed: ' + collapsed);
   console.log('commonAncestorContainer.childNodes?.length: ' + commonAncestorContainer.childNodes?.length);
-  console.log('isEqual(startNode, endNode): ' + isEqual(startNode, endNode));
+  console.log('isEqual(startNode, endNode)1: ' + isEqual(startContainer, endContainer));
+  console.log('isEqual(startNode, endNode)2: ' + isEqual(startContainer?.childNodes?.[startOffset], endContainer));
+  console.log('isEqual(startNode, endNode)3: ' + isEqual(startContainer, endContainer?.childNodes?.[endOffset]));
 }
 
 function normalizeSelectionProcess({
@@ -206,7 +204,7 @@ function normalizeSelectionProcess({
 
 function sameWrappedSelectionProcess({
   selection,
-  startNode,
+  startContainer,
   range,
   commonAncestorContainer,
   startOffset,
@@ -214,7 +212,7 @@ function sameWrappedSelectionProcess({
   className
 }: {
   selection: Selection;
-  startNode: Node;
+  startContainer: Node;
   range: Range;
   commonAncestorContainer: HTMLElement;
   startOffset: number;
@@ -223,7 +221,7 @@ function sameWrappedSelectionProcess({
 }): void {
   // 选中范围和样式范围是否完全相等
   if (
-    startNode.nodeType === Node.ELEMENT_NODE ||
+    startContainer.nodeType === Node.ELEMENT_NODE ||
     (isAllTextNode(commonAncestorContainer?.childNodes) &&
       endOffset - startOffset === commonAncestorContainer?.firstChild?.textContent?.length)
   ) {
@@ -443,7 +441,6 @@ function sameWrappedSelectionProcess({
     }
   }
 }
-
 // 多文本处理
 function mteProcess(className: string): void {
   const selection = window.getSelection();
@@ -461,40 +458,16 @@ function mteProcess(className: string): void {
     // 如果mteArea内不存在任何node，则直接退出
     if (commonAncestorContainer.childNodes.length === 0) return;
 
-    let startNode: Node = range.startContainer;
-    let endNode: Node = range.endContainer;
+    let startContainer: Node = range.startContainer;
+    let endContainer: Node = range.endContainer;
     let startOffset: number = range.startOffset;
     let endOffset: number = range.endOffset;
 
-    // 如果mte内全是文本节点，则进行降级
-    console.log(commonAncestorContainer.childNodes);
-    console.log(isAllTextNode(commonAncestorContainer.childNodes));
-    if (isAllTextNode(commonAncestorContainer.childNodes)) {
-      // 如果选区开头在mteArea根节点，则将选区开头向下降级
-      if (isMteRoot(startNode) && startOffset === 0) {
-        startNode = startNode.firstChild!;
-        startOffset = 0;
-      }
-
-      // 如果选区结尾在mteArea根节点，则将选区结尾向下降级
-      if (isMteRoot(endNode) && endOffset === 1) {
-        endNode = endNode.lastChild!;
-        if (endNode.nodeType === Node.TEXT_NODE) {
-          endOffset = endNode.textContent?.length ?? 1;
-        } else {
-          endOffset = 1;
-        }
-      }
-    } else if (endOffset - startOffset === 1) {
-      // 如果mte内不全是文本节点，且endOffset - startOffset为1，则进行降级
-      startNode = commonAncestorContainer.childNodes[startOffset]!;
-      endNode = startNode;
-      commonAncestorContainer = fromNodeGetNearestContainerNode(endNode)!;
-      startOffset = 0;
-      endOffset = endNode.textContent?.length ?? 1;
-    }
-
-    if (isEqual(startNode, endNode)) {
+    if (
+      isEqual(startContainer, endContainer) ||
+      isEqual(startContainer?.childNodes?.[startOffset], endContainer) ||
+      isEqual(startContainer, endContainer?.childNodes?.[endOffset])
+    ) {
       if (isMteRoot(commonAncestorContainer)) {
         normalizeSelectionProcess({
           range,
@@ -504,7 +477,7 @@ function mteProcess(className: string): void {
       } else {
         sameWrappedSelectionProcess({
           selection,
-          startNode,
+          startContainer,
           range,
           commonAncestorContainer,
           startOffset,
