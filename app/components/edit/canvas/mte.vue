@@ -204,7 +204,7 @@ function normalizeSelectionProcess({
   inputDom.value!.normalize();
 }
 
-function wrappedSelectionProcess({
+function sameWrappedSelectionProcess({
   selection,
   startNode,
   range,
@@ -502,7 +502,7 @@ function mteProcess(className: string): void {
           className
         });
       } else {
-        wrappedSelectionProcess({
+        sameWrappedSelectionProcess({
           selection,
           startNode,
           range,
