@@ -169,67 +169,60 @@ function normalizeSelectionProcess({
 function wrappedSelectionProcess({
   selection,
   startNode,
-  endNode,
   commonAncestorContainer,
   startOffset,
-  endOffset
+  endOffset,
+  className
 }: {
   selection: Selection;
   startNode: Node;
-  endNode: Node;
   commonAncestorContainer: HTMLElement;
   startOffset: number;
   endOffset: number;
+  className: string;
 }): void {
   let targetNode: Node | null = startNode;
   while (!isNil(targetNode.firstChild)) {
     targetNode = targetNode.firstChild;
   }
 
-  if (
-    startNode.nodeType === Node.ELEMENT_NODE ||
-    endOffset - startOffset === commonAncestorContainer?.textContent?.length
-  ) {
-    // if (commonAncestorContainer.classList.contains(className)) {
-    //   if (commonAncestorContainer.classList.length >= 2) {
-    //     commonAncestorContainer.classList.remove(className);
-    //   } else {
-    //   }
-    // } else {
-    //   commonAncestorContainer.classList.add(className);
-    // }
-    /* 1.在目标节点前后插入标记 */
-    const startMarker = document.createElement('span');
-    const endMarker = document.createElement('span');
-    startMarker.style.display = 'none'; // 隐藏标记
-    endMarker.style.display = 'none';
+  if (commonAncestorContainer.classList.contains(className)) {
+    if (commonAncestorContainer.classList.length >= 2) {
+      commonAncestorContainer.classList.remove(className);
+    } else {
+      /* 1.在目标节点前后插入标记 */
+      const startMarker = document.createElement('span');
+      const endMarker = document.createElement('span');
+      startMarker.style.display = 'none'; // 隐藏标记
+      endMarker.style.display = 'none';
 
-    commonAncestorContainer.parentNode?.insertBefore(startMarker, commonAncestorContainer);
-    commonAncestorContainer.parentNode?.insertBefore(endMarker, commonAncestorContainer.nextSibling);
+      commonAncestorContainer.parentNode?.insertBefore(startMarker, commonAncestorContainer);
+      commonAncestorContainer.parentNode?.insertBefore(endMarker, commonAncestorContainer.nextSibling);
 
-    /* 2.替换目标节点 为 目标节点的内部节点 */
-    const textContent = commonAncestorContainer.textContent ?? '';
-    const textNode = document.createTextNode(textContent);
-    commonAncestorContainer.replaceWith(textNode);
+      /* 2.替换目标节点 为 目标节点的内部节点 */
+      const textContent = commonAncestorContainer.textContent ?? '';
+      const textNode = document.createTextNode(textContent);
+      commonAncestorContainer.replaceWith(textNode);
 
-    /* 3.删除目标节点 */
-    commonAncestorContainer.remove();
+      /* 3.删除目标节点 */
+      commonAncestorContainer.remove();
 
-    /* 4.刷新选中区域 */
-    selection.removeAllRanges();
-    const newRange = document.createRange();
-    newRange.setStartAfter(startMarker);
-    newRange.setEndBefore(endMarker);
-    selection.addRange(newRange);
+      /* 4.刷新选中区域 */
+      selection.removeAllRanges();
+      const newRange = document.createRange();
+      newRange.setStartAfter(startMarker);
+      newRange.setEndBefore(endMarker);
+      selection.addRange(newRange);
 
-    /* 5.最后移除标记，保持 DOM 干净 */
-    startMarker.remove();
-    endMarker.remove();
+      /* 5.最后移除标记，保持 DOM 干净 */
+      startMarker.remove();
+      endMarker.remove();
 
-    /* 6. 合并mteArea表层的碎片 */
-    inputDom.value!.normalize();
+      /* 6. 合并mteArea表层的碎片 */
+      inputDom.value!.normalize();
+    }
   } else {
-    console.log('13');
+    commonAncestorContainer.classList.add(className);
   }
 }
 
@@ -250,6 +243,9 @@ function mteProcess(className: string): void {
 
   if (selection?.rangeCount >= 1) {
     const range: Range = selection.getRangeAt(0);
+
+    // 要处理的选取不在mteArea范围内则退出，以免影响到mteArea范围之外
+    if (!inputDom.value?.contains(range.commonAncestorContainer)) return;
 
     const commonAncestorContainer: HTMLElement = fromNodeGetNearestContainerNode(range.commonAncestorContainer)!;
 
@@ -281,10 +277,10 @@ function mteProcess(className: string): void {
         wrappedSelectionProcess({
           selection,
           startNode,
-          endNode,
           commonAncestorContainer,
           startOffset,
-          endOffset
+          endOffset,
+          className
         });
       }
     } else {
