@@ -470,6 +470,11 @@ function mteProcess(className: string): void {
       // 清理碎片
       parentNode!.normalize();
     }
+
+    // 更新value值
+    if (!isNil(inputDom.value?.innerHTML)) {
+      value.value = inputDom.value.innerHTML;
+    }
   }
 }
 
