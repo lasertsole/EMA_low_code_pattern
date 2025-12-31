@@ -243,7 +243,6 @@ function mteProcess(className: string): void {
       if (isNil(parentNode)) return;
 
       if (isWrapper(parentNode)) {
-        console.log(123);
         const oriClassList: string[] = Array.from(parentNode.classList);
         const tarClassList: string[] = changeClass(oriClassList, className);
 
@@ -382,11 +381,10 @@ function mteProcess(className: string): void {
       range.insertNode(newFragment);
 
       // 清理并合并两头node
-      const firstChild: ChildNode = childNodes[0]!;
-      const lastChild: ChildNode = childNodes[childNodes.length - 1]!;
+      const firstChild: Node = newChildNodes[0]!;
+      const lastChild: Node = newChildNodes[newChildNodes.length - 1]!;
       const previousSibling: ChildNode | null = firstChild.previousSibling;
       const nextSibling: ChildNode | null = lastChild.nextSibling;
-
       if (!isNil(previousSibling)) {
         // 如果node内容为空则删除node
         if (isNil(previousSibling.textContent?.length) || previousSibling.textContent.length === 0) {
