@@ -20,9 +20,7 @@
       @input.stop="inputFunc($event)"
       contenteditable="true"
       :readonly="readonly"
-      :style="styleProps">
-      {{ '0123456789' }}
-    </div>
+      :style="styleProps"></div>
   </div>
 </template>
 
