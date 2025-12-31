@@ -385,57 +385,67 @@ function mteProcess(className: string): void {
       const lastChild: Node = newChildNodes[newChildNodes.length - 1]!;
       const previousSibling: ChildNode | null = firstChild.previousSibling;
       const nextSibling: ChildNode | null = lastChild.nextSibling;
-      if (!isNil(previousSibling)) {
-        // 如果node内容为空则删除node
-        if (isNil(previousSibling.textContent?.length) || previousSibling.textContent.length === 0) {
-          previousSibling.remove();
-        } else if (
-          isElementNode(previousSibling) &&
-          isElementNode(firstChild) &&
-          isEqualClassList((previousSibling as HTMLElement).classList, (firstChild as HTMLElement).classList)
-        ) {
-          // 插入起始标记
-          const startMarker: HTMLSpanElement = document.createElement('span');
-          startMarker.style.display = 'none';
-          (firstChild as HTMLElement).prepend(startMarker);
 
-          // 合并相同classList节点
-          (firstChild as HTMLElement).prepend(previousSibling!.firstChild!);
-          previousSibling.remove();
+      const retainRangeStart: (targetNode: HTMLElement) => void = (targetNode: HTMLElement) => {
+        if (!isNil(targetNode)) {
+          // 如果node内容为空则删除node
+          if (isNil(targetNode.textContent?.length) || targetNode.textContent.length === 0) {
+            targetNode.remove();
+          } else if (
+            isElementNode(targetNode) &&
+            isElementNode(firstChild) &&
+            isEqualClassList((targetNode as HTMLElement).classList, (firstChild as HTMLElement).classList)
+          ) {
+            // 插入起始标记
+            const startMarker: HTMLSpanElement = document.createElement('span');
+            startMarker.style.display = 'none';
+            (firstChild as HTMLElement).prepend(startMarker);
 
-          // 重置range起始位置
-          range.setStartBefore(startMarker);
+            // 合并相同classList节点
+            (firstChild as HTMLElement).prepend(targetNode!.firstChild!);
+            targetNode.remove();
 
-          // 去除标记
-          startMarker.remove();
+            // 重置range起始位置
+            range.setStartBefore(startMarker);
+
+            // 去除标记
+            startMarker.remove();
+          }
         }
-      }
+      };
 
-      if (!isNil(nextSibling)) {
-        // 如果node内容为空则删除node
-        if (isNil(nextSibling.textContent?.length) || nextSibling.textContent.length === 0) {
-          nextSibling.remove();
-        } else if (
-          isElementNode(nextSibling) &&
-          isElementNode(lastChild) &&
-          isEqualClassList((nextSibling as HTMLElement).classList, (lastChild as HTMLElement).classList)
-        ) {
-          // 插入起始标记
-          const endMarker: HTMLSpanElement = document.createElement('span');
-          endMarker.style.display = 'none';
-          (lastChild as HTMLElement).append(endMarker);
+      const retainRangeEnd: (targetNode: HTMLElement) => void = (targetNode: HTMLElement) => {
+        if (!isNil(targetNode)) {
+          // 如果node内容为空则删除node
+          if (isNil(targetNode.textContent?.length) || targetNode.textContent.length === 0) {
+            targetNode.remove();
+          } else if (
+            isElementNode(targetNode) &&
+            isElementNode(lastChild) &&
+            isEqualClassList((targetNode as HTMLElement).classList, (lastChild as HTMLElement).classList)
+          ) {
+            // 插入起始标记
+            const endMarker: HTMLSpanElement = document.createElement('span');
+            endMarker.style.display = 'none';
+            (lastChild as HTMLElement).append(endMarker);
 
-          // 合并相同classList节点
-          (lastChild as HTMLElement).append(nextSibling!.firstChild!);
-          nextSibling.remove();
+            // 合并相同classList节点
+            (lastChild as HTMLElement).append(targetNode!.firstChild!);
+            targetNode.remove();
 
-          // 重置range起始位置
-          range.setEndAfter(endMarker);
+            // 重置range起始位置
+            range.setEndAfter(endMarker);
 
-          // 去除标记
-          endMarker.remove();
+            // 去除标记
+            endMarker.remove();
+          }
         }
-      }
+      };
+
+      retainRangeStart(previousSibling as HTMLElement);
+      retainRangeStart(firstChild.previousSibling as HTMLElement);
+      retainRangeEnd(nextSibling as HTMLElement);
+      retainRangeEnd(lastChild.nextSibling as HTMLElement);
 
       // 清理碎片
       parentNode!.normalize();
