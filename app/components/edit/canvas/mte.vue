@@ -28,7 +28,7 @@
 
 <script lang="ts" setup>
 import { type ShallowRef, type StyleValue } from 'vue';
-import { cloneDeep, isEmpty, isEqual, isNil } from 'lodash-es';
+import { cloneDeep, isEmpty, isNil } from 'lodash-es';
 
 // domProps 和 styleProps分离
 const { value } = defineProps(
@@ -190,32 +190,6 @@ function unwrapEleNode(targetNode: HTMLElement): void {
     targetNode.parentNode?.insertBefore(node, targetNode);
   }
   targetNode.remove();
-}
-
-function checkSpanInRange(range: Range): void {
-  const { startContainer, endContainer, commonAncestorContainer, startOffset, endOffset, collapsed } = range;
-
-  console.log(startContainer);
-  console.log(endContainer);
-  console.log(commonAncestorContainer);
-  console.log('startOffset: ' + startOffset);
-  console.log('endOffset: ' + endOffset);
-  console.log('endOffset - startOffset: ' + (endOffset - startOffset));
-  console.log('collapsed: ' + collapsed);
-  console.log('startContainer.childNodes?.length: ' + startContainer.childNodes?.length);
-  console.log('endContainer.childNodes?.length: ' + endContainer.childNodes?.length);
-  console.log('commonAncestorContainer.childNodes?.length: ' + commonAncestorContainer.childNodes?.length);
-  console.log('isEqual(startContainer, endContainer): ' + isEqual(startContainer, endContainer));
-  // 在头部
-  console.log(
-    'isEqual(startContainer?.childNodes?.[startOffset], endContainer): ' +
-      isEqual(startContainer?.childNodes?.[0], endContainer)
-  );
-  // 在尾部
-  console.log(
-    'isEqual(startContainer, endContainer?.childNodes?.[endOffset]): ' +
-      isEqual(startContainer, endContainer?.childNodes?.[0])
-  );
 }
 
 // 多文本处理
@@ -474,14 +448,7 @@ const operationOptions: { name: string; process: () => void }[] = reactive([
   {
     name: '下划线',
     process: () => {
-      const selection = window.getSelection();
-      if (isNil(selection)) return;
-      if (selection?.rangeCount >= 1) {
-        for (let i = 0; i < selection.rangeCount; i++) {
-          const range: Range = selection.getRangeAt(i);
-          checkSpanInRange(range);
-        }
-      }
+      mteProcess('underline');
     }
   }
 ]);
@@ -543,6 +510,10 @@ $textContainerPadding: 0.3rem;
 
       &.italic {
         font-style: italic;
+      }
+
+      &.underline {
+        text-decoration: underline;
       }
     }
   }
