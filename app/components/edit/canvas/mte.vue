@@ -118,6 +118,7 @@ function mergeSiblingNode(targetNode: Node): Range {
     !isNil(targetNode.previousSibling) && targetNode.previousSibling.nodeType === Node.ELEMENT_NODE
       ? (targetNode.previousSibling as HTMLElement)
       : null; // 获取选中dom的前邻接HTMLElement
+
   const nextSibling: HTMLElement | null =
     !isNil(targetNode.nextSibling) && targetNode.nextSibling.nodeType === Node.ELEMENT_NODE
       ? (targetNode.nextSibling as HTMLElement)
@@ -128,24 +129,50 @@ function mergeSiblingNode(targetNode: Node): Range {
   range.setEndAfter(targetNode);
 
   if (targetNode instanceof HTMLElement) {
-    if (
-      !isNil(previousSibling) &&
-      previousSibling.childNodes.length > 0 &&
-      isEqualClassList(previousSibling.classList, (targetNode as HTMLElement).classList)
-    ) {
-      targetNode.prepend(...Array.from(previousSibling.childNodes));
-      range.setStart(targetNode, previousSibling.textContent?.length ?? 0);
+    if (!isNil(previousSibling) && previousSibling.childNodes.length === 0) {
       previousSibling.remove();
+    } else if (!isNil(previousSibling) && isEqualClassList(previousSibling.classList, targetNode.classList)) {
+      // 插入起始标记
+      const startMarker: HTMLSpanElement = document.createElement('span');
+      startMarker.style.display = 'none';
+      targetNode.prepend(startMarker);
+
+      targetNode.normalize();
+
+      // 合并相同classList节点
+      targetNode.prepend(previousSibling!.firstChild!);
+      previousSibling.remove();
+
+      // 重置range起始位置
+      range.setStartBefore(startMarker);
+
+      // 去除标记
+      startMarker.remove();
+
+      targetNode.normalize();
     }
 
-    if (
-      !isNil(nextSibling) &&
-      nextSibling.childNodes.length > 0 &&
-      isEqualClassList(nextSibling.classList, targetNode.classList)
-    ) {
-      range.setEnd(targetNode, targetNode.textContent?.length ?? 0);
-      targetNode.append(...Array.from(nextSibling.childNodes));
+    if (!isNil(nextSibling) && nextSibling.childNodes.length === 0) {
       nextSibling.remove();
+    } else if (!isNil(nextSibling) && isEqualClassList(nextSibling.classList, targetNode.classList)) {
+      // 插入起始标记
+      const endMarker: HTMLSpanElement = document.createElement('span');
+      endMarker.style.display = 'none';
+      targetNode.append(endMarker);
+
+      targetNode.normalize();
+
+      // 合并相同classList节点
+      targetNode.append(nextSibling!.firstChild!);
+      nextSibling.remove();
+
+      // 重置range起始位置
+      range.setEndAfter(endMarker);
+
+      // 去除标记
+      endMarker.remove();
+
+      targetNode.normalize();
     }
   }
 
@@ -289,6 +316,14 @@ function mteProcess(className: string): void {
         }
 
         range.insertNode(targetNode);
+
+        // 合并邻近节点
+        parentNode.normalize();
+        const newRange = mergeSiblingNode(targetNode);
+
+        // 更新选区
+        selection.removeAllRanges();
+        selection.addRange(newRange);
 
         parentNode.normalize();
       }
