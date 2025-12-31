@@ -41,15 +41,6 @@ const styleProps = useAttrs()?.styleProps as StyleValue;
 
 const modelValue = ref(isNil(value.default) ? value : value.default);
 
-// 判断是否为 文本节点
-function isText(node: Node): boolean {
-  if (!isNil(node) && node.nodeType === Node.TEXT_NODE) {
-    return true;
-  }
-
-  return false;
-}
-
 // 判断是否为html元素节点
 function isElementNode(node: Node): boolean {
   if (!isNil(node) && node.nodeType === Node.ELEMENT_NODE) {
@@ -90,7 +81,7 @@ function fromNodeGetNearestContainerNode(node: Node): HTMLElement | null {
 }
 
 //判断两个classList是否相等
-function isEqualClass(classA: DOMTokenList | null | undefined, classB: DOMTokenList | null | undefined): boolean {
+function isEqualClassList(classA: DOMTokenList | null | undefined, classB: DOMTokenList | null | undefined): boolean {
   if (isNil(classA) || isNil(classB)) return false;
   const setA = new Set(classA);
   const setB = new Set(classB);
@@ -140,7 +131,7 @@ function mergeSiblingNode(targetNode: Node): Range {
     if (
       !isNil(previousSibling) &&
       previousSibling.childNodes.length > 0 &&
-      isEqualClass(previousSibling.classList, (targetNode as HTMLElement).classList)
+      isEqualClassList(previousSibling.classList, (targetNode as HTMLElement).classList)
     ) {
       targetNode.prepend(...Array.from(previousSibling.childNodes));
       range.setStart(targetNode, previousSibling.textContent?.length ?? 0);
@@ -150,7 +141,7 @@ function mergeSiblingNode(targetNode: Node): Range {
     if (
       !isNil(nextSibling) &&
       nextSibling.childNodes.length > 0 &&
-      isEqualClass(nextSibling.classList, targetNode.classList)
+      isEqualClassList(nextSibling.classList, targetNode.classList)
     ) {
       range.setEnd(targetNode, targetNode.textContent?.length ?? 0);
       targetNode.append(...Array.from(nextSibling.childNodes));
@@ -172,17 +163,6 @@ function unwrapEleNode(targetNode: HTMLElement): void {
     targetNode.parentNode?.insertBefore(node, targetNode);
   }
   targetNode.remove();
-}
-
-// 是否子节点全是文本节点？
-function isAllTextNode(nodes: NodeListOf<ChildNode>): boolean {
-  if (nodes.length < 0) return false;
-  let res = true;
-  for (const node of nodes) {
-    res = res && node.nodeType === Node.TEXT_NODE;
-    if (!res) break;
-  }
-  return res;
 }
 
 function checkSpanInRange(range: Range): void {
@@ -345,9 +325,83 @@ function mteProcess(className: string): void {
         });
       }
 
+      // newChildNodes内的同class的Node进行合并
+      for (let i: number = newChildNodes.length - 2; i >= 0; i--) {
+        const currentNode: Node = newChildNodes[i]!;
+
+        const nextSiblingNode: Node = newChildNodes[i + 1]!;
+        if (
+          !isNil(nextSiblingNode?.firstChild) &&
+          isElementNode(nextSiblingNode) &&
+          isEqualClassList((nextSiblingNode as HTMLElement).classList, (currentNode as HTMLElement).classList)
+        ) {
+          currentNode.appendChild(nextSiblingNode.firstChild);
+          currentNode.normalize();
+          newChildNodes.splice(i + 1, 1);
+        }
+      }
+
       // 将结果导回range
       newFragment.append(...newChildNodes);
       range.insertNode(newFragment);
+
+      // 清理并合并两头node
+      const firstChild: ChildNode = childNodes[0]!;
+      const lastChild: ChildNode = childNodes[childNodes.length - 1]!;
+      const previousSibling: ChildNode | null = firstChild.previousSibling;
+      const nextSibling: ChildNode | null = lastChild.nextSibling;
+
+      if (!isNil(previousSibling)) {
+        // 如果node内容为空则删除node
+        if (isNil(previousSibling.textContent?.length) || previousSibling.textContent.length === 0) {
+          previousSibling.remove();
+        } else if (
+          isElementNode(previousSibling) &&
+          isElementNode(firstChild) &&
+          isEqualClassList((previousSibling as HTMLElement).classList, (firstChild as HTMLElement).classList)
+        ) {
+          // 插入起始标记
+          const startMarker: HTMLSpanElement = document.createElement('span');
+          startMarker.style.display = 'none';
+          (firstChild as HTMLElement).prepend(startMarker);
+
+          // 合并相同classList节点
+          (firstChild as HTMLElement).prepend(previousSibling!.firstChild!);
+          previousSibling.remove();
+
+          // 重置range起始位置
+          range.setStartBefore(startMarker);
+
+          // 去除标记
+          startMarker.remove();
+        }
+      }
+
+      if (!isNil(nextSibling)) {
+        // 如果node内容为空则删除node
+        if (isNil(nextSibling.textContent?.length) || nextSibling.textContent.length === 0) {
+          nextSibling.remove();
+        } else if (
+          isElementNode(nextSibling) &&
+          isElementNode(lastChild) &&
+          isEqualClassList((nextSibling as HTMLElement).classList, (lastChild as HTMLElement).classList)
+        ) {
+          // 插入起始标记
+          const endMarker: HTMLSpanElement = document.createElement('span');
+          endMarker.style.display = 'none';
+          (lastChild as HTMLElement).append(endMarker);
+
+          // 合并相同classList节点
+          (lastChild as HTMLElement).append(nextSibling!.firstChild!);
+          nextSibling.remove();
+
+          // 重置range起始位置
+          range.setEndAfter(endMarker);
+
+          // 去除标记
+          endMarker.remove();
+        }
+      }
 
       // 清理碎片
       parentNode!.normalize();
