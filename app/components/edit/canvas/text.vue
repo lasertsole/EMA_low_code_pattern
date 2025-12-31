@@ -37,5 +37,23 @@ $clearIconSize: 20px;
     content: attr(placeholder);
     color: gray;
   }
+
+  > :deep(span) {
+    &.strong {
+      font-weight: bold;
+    }
+
+    &.italic {
+      font-style: italic;
+    }
+
+    &.underline {
+      text-decoration: underline;
+    }
+
+    &.hignlight {
+      background-color: yellow;
+    }
+  }
 }
 </style>
