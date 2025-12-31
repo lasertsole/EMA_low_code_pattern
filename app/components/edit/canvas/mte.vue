@@ -59,8 +59,12 @@ function isMteRoot(node: Node): boolean {
 }
 
 // 判断是否为 包装节点
-function isWrapper(node: Node): boolean {
-  if (isElementNode(node) && !(node as HTMLElement).hasAttribute('mteAreaRoot')) {
+function isTextWrapper(node: Node): boolean {
+  if (
+    isElementNode(node) &&
+    (node as HTMLElement).tagName === 'SPAN' &&
+    !(node as HTMLElement).hasAttribute('mteAreaRoot')
+  ) {
     return true;
   }
 
@@ -216,7 +220,7 @@ function mteProcess(className: string): void {
     } else if (fragment.childNodes.length === 1) {
       if (isNil(parentNode)) return;
 
-      if (isWrapper(parentNode)) {
+      if (isTextWrapper(parentNode)) {
         const oriClassList: string[] = Array.from(parentNode.classList);
         const tarClassList: string[] = changeClass(oriClassList, className);
 
@@ -293,7 +297,7 @@ function mteProcess(className: string): void {
         range.insertNode(targetNode);
 
         // 如果目标节点是span包装节点，则父节点清空碎片。反之，如果目标节点是文本节点，则保留碎片，碎片位置用于给range定位
-        if (isWrapper(targetNode)) {
+        if (isTextWrapper(targetNode)) {
           parentNode.normalize();
         }
 
@@ -450,6 +454,12 @@ const operationOptions: { name: string; process: () => void }[] = reactive([
     process: () => {
       mteProcess('underline');
     }
+  },
+  {
+    name: '高亮',
+    process: () => {
+      mteProcess('hignlight');
+    }
   }
 ]);
 
@@ -514,6 +524,10 @@ $textContainerPadding: 0.3rem;
 
       &.underline {
         text-decoration: underline;
+      }
+
+      &.hignlight {
+        background-color: yellow;
       }
     }
   }
