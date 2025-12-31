@@ -243,6 +243,7 @@ function mteProcess(className: string): void {
       if (isNil(parentNode)) return;
 
       if (isWrapper(parentNode)) {
+        console.log(123);
         const oriClassList: string[] = Array.from(parentNode.classList);
         const tarClassList: string[] = changeClass(oriClassList, className);
 
@@ -315,10 +316,10 @@ function mteProcess(className: string): void {
           targetNode = span;
         }
 
+        // 将目标节点插回原处
         range.insertNode(targetNode);
 
         // 合并邻近节点
-        parentNode.normalize();
         const newRange = mergeSiblingNode(targetNode);
 
         // 更新选区
