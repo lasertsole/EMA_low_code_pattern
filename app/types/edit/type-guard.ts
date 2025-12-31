@@ -2,13 +2,6 @@ import { isFunction, isNil, isNumber, isObject, isString } from 'lodash-es';
 import { CONSTRUCT_TO_CONF_COMPONENT_NAME_ENUM, COMPONENT_PROP_ITEM_CONFIG_OPTION_UNIT_EUM } from './type';
 import type { ComponentPropItem, ComponentPropItemConfigOptionObj } from './type';
 
-/** 是否是 具体属性项值类型 的判断函数*/
-export function isComponentPropItemObj(obj: unknown): obj is ComponentPropItem {
-  return (
-    !isNil(obj) && isObject(obj) && 'default' in obj && 'config' in obj && 'type' in (obj as ComponentPropItem).config
-  );
-}
-
 /**
  * 具体属性项类型守卫函数
  * @param {unknown} obj - 待验证的对象
