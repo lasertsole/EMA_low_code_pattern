@@ -318,6 +318,11 @@ function mteProcess(className: string): void {
         // 将目标节点插回原处
         range.insertNode(targetNode);
 
+        // 如果目标节点是span包装节点，则父节点清空碎片。反之，如果目标节点是文本节点，则保留碎片，碎片位置用于给range定位
+        if (isWrapper(targetNode)) {
+          parentNode.normalize();
+        }
+
         // 合并邻近节点
         const newRange = mergeSiblingNode(targetNode);
 
