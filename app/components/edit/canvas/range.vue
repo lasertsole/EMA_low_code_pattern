@@ -2,14 +2,14 @@
   <div
     class="root"
     :style="styleProps">
-    <span class="num">{{ isNil(min?.value) ? 0 : min?.value }}</span>
+    <span class="num">{{ isNumber(min?.value) ? min?.value : 0 }}</span>
     <input
       type="range"
       :min="isNumber(min?.value) ? min?.value : 0"
       :max="isNumber(max?.value) ? max?.value : 0"
       :step="isNumber(step?.value) ? step?.value : 0"
       v-model="modelValue" />
-    <span class="num">{{ isNil(max?.value) ? 0 : max?.value }}</span>
+    <span class="num">{{ isNumber(max?.value) ? max?.value : 0 }}</span>
   </div>
 </template>
 
