@@ -35,7 +35,6 @@ watch(modelValue, newVal => {
   if (isNil(value?.value.value)) return;
 
   value.value.value = newVal;
-  console.log(value.value.value);
 });
 
 const styleProps = useAttrs()?.styleProps as StyleValue;
@@ -43,6 +42,7 @@ const styleProps = useAttrs()?.styleProps as StyleValue;
 
 <style lang="scss" scoped>
 .root {
+  @include fullHeight;
   display: flex;
   > input {
     flex-grow: 1;
@@ -50,6 +50,8 @@ const styleProps = useAttrs()?.styleProps as StyleValue;
 
   > .num {
     @include marginX(1rem);
+    display: flex;
+    align-items: center;
   }
 }
 </style>
