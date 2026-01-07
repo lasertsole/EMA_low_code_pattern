@@ -29,7 +29,7 @@ const emits: (event: 'update:value', ...args: any[]) => void = defineEmits(['upd
 function processInput(e: InputEvent): void {
   if (isNil(e.target)) return;
   emits('update:value', Number((e.target as HTMLInputElement).value));
-  (e.target as HTMLInputElement).value = String(value);
+  (e.target as HTMLInputElement).valueAsNumber = Number(value);
 }
 </script>
 
@@ -47,3 +47,4 @@ function processInput(e: InputEvent): void {
   }
 }
 </style>
+
