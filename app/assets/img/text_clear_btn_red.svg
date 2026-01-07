@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    focusable="true"
+    fill="rgb(247, 10, 10)"
+    viewBox="0 0 16 16"
+    width="100"
+    height="100"
+    style="vertical-align: middle"
+>
+    <g fill-rule="nonzero" fill="none">
+        <path
+        d="M2 8c0 3.309 2.691 6 6 6 3.308 0 6-2.691 6-6s-2.692-6-6-6C4.691 2 2 4.691 2 8Z"
+        fill="rgb(247, 10, 10)"
+        ></path>
+        <path
+        d="M10.475 5.525a.571.571 0 0 1 0 .808L8.808 8l1.667 1.668a.571.571 0 1 1-.808.808L8 8.808l-1.667 1.667a.571.571 0 1 1-.808-.808l1.667-1.668-1.667-1.666a.571.571 0 1 1 .808-.808L8 7.191l1.667-1.666a.571.571 0 0 1 .808 0Z"
+        fill="#FFF"
+        ></path>
+    </g>
+</svg>
