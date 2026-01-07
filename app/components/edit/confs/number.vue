@@ -3,23 +3,34 @@
     <input
       type="number"
       inputmode="numeric"
-      v-model="value"
+      :value="value"
+      @input.prevent="processInput"
       :disabled="disabled" />
   </div>
 </template>
 
 <script lang="ts" setup>
-const { disabled } = defineProps({
+import { isNil } from 'lodash-es';
+
+const { disabled, value } = defineProps({
   disabled: {
     type: Boolean,
+    required: true
+  },
+  value: {
+    type: Number,
     required: true
   }
 });
 
-const value = defineModel('value', {
-  type: Number,
-  required: true
-});
+const emits: (event: 'update:value', ...args: any[]) => void = defineEmits(['update:value']);
+
+// 处理输入
+function processInput(e: InputEvent): void {
+  if (isNil(e.target)) return;
+  emits('update:value', Number((e.target as HTMLInputElement).value));
+  (e.target as HTMLInputElement).value = String(value);
+}
 </script>
 
 <style lang="scss" scoped>
