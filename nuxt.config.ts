@@ -5,18 +5,18 @@ export default defineNuxtConfig({
     head: {
       title: 'Nuxt', // default fallback title
       htmlAttrs: {
-        lang: 'en',
+        lang: 'en'
       },
-      link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      ],
-    },
+      link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    }
   },
+
   devtools: { enabled: false },
+
+  modules: ['@primevue/nuxt-module'],
+
   //设置全局样式
-  css: [
-    '@/assets/css/init.scss'
-  ],
+  css: ['@/assets/css/init.scss'],
 
   //在全局scss中添加样式
   vite: {
@@ -30,11 +30,11 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      apiBaseURL: "/api",
-    },
+      apiBaseURL: '/api'
+    }
   },
 
-  imports:{
-    dirs:['~/composables/**']
+  imports: {
+    dirs: ['~/composables/**']
   }
-})
+});
